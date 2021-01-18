@@ -86,7 +86,7 @@ function pagadito_config()
         ),
         // the yesno field type displays a single checkbox option
         'sandbox_active' => array(
-            'FriendlyName' => 'Test Mode',
+            'FriendlyName' => 'Test Mode / Pruebas',
             'Type' => 'yesno',
             'Description' => 'Tick to enable test mode/Activar modo Pruebas',
         ),
