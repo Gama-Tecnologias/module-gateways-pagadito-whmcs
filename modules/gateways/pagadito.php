@@ -115,7 +115,6 @@ function pagadito_link($params)
     $currencyCode = $params['currency'];
 
     // System Parameters
-    $companyName = $params['companyname'];
     $systemUrl = $params['systemurl'];
     $returnUrl = $params['returnurl'];
     $langPayNow = $params['langpaynow'];
@@ -123,8 +122,7 @@ function pagadito_link($params)
     $moduleName = $params['paymentmethod'];
     $whmcsVersion = $params['whmcsVersion'];
 
-    return '<form method="post" action="' . $systemUrl . '">
-        <input type="companyName" value="' . $companyName . '" />
+    return '<form method="post" action="' . $systemUrl . '/modules/gateways/pagadito/pagadito_procesar.php">
         <input type="returnUrl" value="' . $returnUrl . '" />
         <input type="moduleDisplayName" value="' . $moduleDisplayName . '" />
         <input type="moduleName" value="' . $moduleName . '" />
