@@ -121,7 +121,7 @@ function pagadito_3dsecure($params)
     $pagaditoUID = $params['pagadito_UID'];
     $pagaditoWSK = $params['pagadito_WSK'];
     $sandboxActive = $params['sandbox_active'];
-    $textTransaction = $params['text_transaction'];17 Enero
+    $textTransaction = $params['text_transaction'];
 
     // Invoice Parameters
     $invoiceId = $params['invoiceid'];
@@ -162,7 +162,7 @@ function pagadito_3dsecure($params)
     $url = 'https://www.demopaymentgateway.com/do.3dauth';
 
     $postfields = array(
-        'account_id' => $accountId,
+        //'account_id' => $accountId,
         'invoice_id' => $invoiceId,
         'amount' => $amount,
         'currency' => $currencyCode,
@@ -204,6 +204,7 @@ function pagadito_3dsecure($params)
  *
  * @return array Transaction response status
  */
+/*
 function pagadito_capture2($params)
 {
     // Gateway Configuration Parameters
@@ -275,7 +276,7 @@ function pagadito_capture2($params)
 
     return $returnData;
 }
-
+*/
 
 /**
  * Refund transaction.
@@ -288,7 +289,8 @@ function pagadito_capture2($params)
  *
  * @return array Transaction response status
  */
-function pagadito_refund($params)
+/*
+function pagadito_refund2($params)
 {
     // Gateway Configuration Parameters
     $accountId = $params['accountID'];
@@ -336,5 +338,6 @@ function pagadito_refund($params)
         'fee' => $feeAmount,
     );
 }
+*/
 
 ?>
