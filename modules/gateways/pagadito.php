@@ -66,23 +66,23 @@ function pagadito_config()
         // defined here for backwards compatibility
         'FriendlyName' => array(
             'Type' => 'System',
-            'Value' => 'Pagadito Gateway Module by gamatecnologias.com',
+            'Value' => 'Tarjeta de credito y debito',
         ),
         // a text field type allows for single line text input
-        'accountID' => array(
-            'FriendlyName' => 'Account ID',
-            'Type' => 'text',
-            'Size' => '25',
-            'Default' => '',
-            'Description' => 'Enter your account ID here',
-        ),
-        // a password field type allows for masked text input
-        'secretKey' => array(
-            'FriendlyName' => 'Secret Key',
+        'pagadito_UID' => array(
+            'FriendlyName' => 'Pagadito UID',
             'Type' => 'password',
-            'Size' => '25',
+            'Size' => '50',
             'Default' => '',
-            'Description' => 'Enter secret key here',
+            'Description' => 'Ingreso su UID proporcionado por Pagadito',
+        ),
+        // a text field type allows for single line text input
+        'pagadito_WSK' => array(
+            'FriendlyName' => 'Pagadito WSK',
+            'Type' => 'password',
+            'Size' => '50',
+            'Default' => '',
+            'Description' => 'Ingreso su WSK proporcionado por Pagadito',
         ),
         // the yesno field type displays a single checkbox option
         'sandbox_active' => array(
@@ -90,31 +90,13 @@ function pagadito_config()
             'Type' => 'yesno',
             'Description' => 'Tick to enable test mode/Activar modo Pruebas',
         ),
-        // the dropdown field type renders a select menu of options
-        'dropdownField' => array(
-            'FriendlyName' => 'Dropdown Field',
-            'Type' => 'dropdown',
-            'Options' => array(
-                'option1' => 'Display Value 1',
-                'option2' => 'Second Option',
-                'option3' => 'Another Option',
-            ),
-            'Description' => 'Choose one',
-        ),
-        // the radio field type displays a series of radio button options
-        'radioField' => array(
-            'FriendlyName' => 'Radio Field',
-            'Type' => 'radio',
-            'Options' => 'First Option,Second Option,Third Option',
-            'Description' => 'Choose your option!',
-        ),
-        // the textarea field type allows for multi-line text input
-        'textareaField' => array(
-            'FriendlyName' => 'Textarea Field',
-            'Type' => 'textarea',
-            'Rows' => '3',
-            'Cols' => '60',
-            'Description' => 'Freeform multi-line text input field',
+        // a text field type allows for single line text input
+        'text_transaction' => array(
+            'FriendlyName' => 'Texto transaccion',
+            'Type' => 'text',
+            'Size' => '25',
+            'Default' => '',
+            'Description' => 'Ingrese el texto que aparecera en el estado de cuenta de su cliente.',
         ),
     );
 }
