@@ -12,3 +12,8 @@
 .form-pagadito input[type=submit]:hover {
     background-color: #469546;
 }
+
+.form-pagadito img {
+    max-height: 30px !important;
+    max-width: 200px !important;
+}

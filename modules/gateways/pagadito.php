@@ -103,7 +103,7 @@ function pagadito_config()
             'Type' => 'text',
             'Size' => '100',
             'Default' => '',
-            'Description' => 'Imagen tarjetas par ala factura',
+            'Description' => 'Imagen tarjetas par ala factura, 200px por 30px maximo',
         ),
     );
 }
@@ -128,13 +128,9 @@ function pagadito_link($params)
     $langPayNow = $params['langpaynow'];
     $companyName = $params['companyname'];
     $urlImagen = $params['urlImagen'];
-    if (isset($urlImagen) or empty($urlImagen) or is_null($urlImagen)) {
-        $urlImagen = '.\modules\gateways\pagadito\tarjetas-min.png';
-    }
-
-    $returnStr = '<style>' . file_get_contents(__DIR__ . '/pagadito/css.css') . '</style>';
 
     // Build button
+    $returnStr = '<style>' . file_get_contents(__DIR__ . '/pagadito/css.css') . '</style>';
     $returnStr .= '<form class="form-pagadito" method="post" action="' . $systemUrl . 'modules/gateways/pagadito/pagadito_procesar.php">';
     $returnStr .= '<input type="hidden" name="returnUrl" value="' . urlencode($returnUrl) . '" />';
     $returnStr .= '<input type="hidden" name="pagaditoUID" value="' . urlencode($pagaditoUID) . '" />';
@@ -145,8 +141,8 @@ function pagadito_link($params)
     $returnStr .= '<input type="hidden" name="description" value="' . urlencode($description) . '" />';
     $returnStr .= '<input type="hidden" name="amount" value="' . urlencode($amount) . '" />';
     $returnStr .= '<input type="hidden" name="currencyCode" value="' . urlencode($currencyCode) . '" />';
-    $returnStr .= '<input type="submit" value="' . $langPayNow . '" /></form>';
-    $returnStr .= '<img src="' . $urlImagen . '" alt="' . $companyName . '">';
+    $returnStr .= '<input type="submit" value="' . $langPayNow . '" />';
+    $returnStr .= '<img src="' . (empty($urlImagen) ? '.\modules\gateways\pagadito\tarjetas-min.png' : $urlImagen) . '" alt="' . $companyName . '"></form>';
 
     return $returnStr;
 }
@@ -257,7 +253,7 @@ function pagadito_3dsecure($params)
  * @return array Transaction response status
  */
 /*
-function pagadito_capture2($params)
+function pagadito_capture($params)
 {
     // Gateway Configuration Parameters
     $accountId = $params['accountID'];
@@ -342,7 +338,7 @@ function pagadito_capture2($params)
  * @return array Transaction response status
  */
 /*
-function pagadito_refund2($params)
+function pagadito_refund($params)
 {
     // Gateway Configuration Parameters
     $accountId = $params['accountID'];
