@@ -12,6 +12,8 @@
  * @link        https://www.gamatecnologias.com/
  */
 
+ require_once __DIR__ ."/../pagadito/pagadito_api.php";
+
 if (!defined("WHMCS")) {
     die("This file cannot be accessed directly");
 }
@@ -101,6 +103,28 @@ function pagadito_config()
     );
 }
 
+function pagadito_link($params) {
+    // Gateway Configuration Parameters
+    $pagaditoUID = $params['pagadito_UID'];
+    $pagaditoWSK = $params['pagadito_WSK'];
+    $sandboxActive = $params['sandbox_active'];
+    $textTransaction = $params['text_transaction'];
+
+    // Invoice Parameters
+    $invoiceId = $params['invoiceid'];
+    $description = $params["description"];
+    $amount = $params['amount'];
+    $currencyCode = $params['currency'];
+
+    return '<form method="post" action="https://www.example.com/checkout">
+        <input type="invoice_number" value="' . $params['invoiceid'] . '" />
+        <input type="description" value="' . $params['description'] . '" />
+        <input type="amount" value="' . $params['amount'] . '" />
+        <input type="currency" value="' . $params['currency'] . '" />
+        <input type="submit" value="' . $params['langpaynow'] . '" />
+        </form>';
+}
+
 /**
  * Perform 3D Authentication.
  *
@@ -115,6 +139,7 @@ function pagadito_config()
  *
  * @return string 3D Secure Form
  */
+/*
 function pagadito_3dsecure($params)
 {
     // Gateway Configuration Parameters
@@ -189,6 +214,7 @@ function pagadito_3dsecure($params)
 
     return $htmlOutput;
 }
+*/
 
 /**
  * Capture payment.
@@ -339,5 +365,3 @@ function pagadito_refund2($params)
     );
 }
 */
-
-?>
