@@ -119,10 +119,13 @@ function pagadito_link($params)
     $returnUrl = $params['returnurl'];
     $langPayNow = $params['langpaynow'];
     $companyName = $params['companyname'];
+    
+    $returnStr = '<style>'.file_get_contents('.\modules\gateways\pagadito\css.css').'</style>';
 
-    $returnStr = '<img src=".\modules\gateways\pagadito\tarjetas-min.png" alt="'.$companyName.'">';
+    $returnStr .= '<img src=".\modules\gateways\pagadito\tarjetas-min.png" alt="'.$companyName.'">';
+
     // Build button
-    $returnStr .= '<form method="post" action="' . $systemUrl . 'modules/gateways/pagadito/pagadito_procesar.php">';
+    $returnStr .= '<form class="form-pagadito" method="post" action="' . $systemUrl . 'modules/gateways/pagadito/pagadito_procesar.php">';
     $returnStr .= '<input type="hidden" name="returnUrl" value="' . urlencode($returnUrl) . '" />';
     $returnStr .= '<input type="hidden" name="pagaditoUID" value="' . urlencode($pagaditoUID) . '" />';
     $returnStr .= '<input type="hidden" name="pagaditoWSK" value="' . urlencode($pagaditoWSK) . '" />';

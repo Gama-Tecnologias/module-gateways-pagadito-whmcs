@@ -1,0 +1,6 @@
+.form-pagadito input[type=submit] {
+    padding: 5px 20px;
+    margin: 6px 0;
+    background: red;
+    border: 0px;
+}
