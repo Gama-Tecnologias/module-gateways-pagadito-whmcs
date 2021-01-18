@@ -118,27 +118,21 @@ function pagadito_link($params)
     $systemUrl = $params['systemurl'];
     $returnUrl = $params['returnurl'];
     $langPayNow = $params['langpaynow'];
-    $moduleDisplayName = $params['name'];
-    $moduleName = $params['paymentmethod'];
-    $whmcsVersion = $params['whmcsVersion'];
 
-    return '<form method="post" action="' . $systemUrl . '/modules/gateways/pagadito/pagadito_procesar.php">
-        <input type="returnUrl" value="' . $returnUrl . '" />
-        <input type="moduleDisplayName" value="' . $moduleDisplayName . '" />
-        <input type="moduleName" value="' . $moduleName . '" />
-        <input type="whmcsVersion" value="' . $whmcsVersion . '" />
-    
-        <input type="pagaditoUID" value="' . $pagaditoUID . '" />
-        <input type="pagaditoWSK" value="' . $pagaditoWSK . '" />
-        <input type="sandboxActive" value="' . $sandboxActive . '" />
-        <input type="pagosPreautorizados" value="' . $pagosPreautorizados . '" />
+    // Build button
+    $returnStr = '<form method="post" action="' . $systemUrl . 'modules/gateways/pagadito/pagadito_procesar.php">';
+    $returnStr .= '<input type="hidden" name="' . $returnUrl . '" value="' . urlencode($returnUrl) . '" />';
+    $returnStr .= '<input type="hidden" name="' . $pagaditoUID . '" value="' . urlencode($pagaditoUID) . '" />';
+    $returnStr .= '<input type="hidden" name="' . $pagaditoWSK . '" value="' . urlencode($pagaditoWSK) . '" />';
+    $returnStr .= '<input type="hidden" name="' . $sandboxActive . '" value="' . urlencode($sandboxActive) . '" />';
+    $returnStr .= '<input type="hidden" name="' . $pagosPreautorizados . '" value="' . urlencode($pagosPreautorizados) . '" />';
+    $returnStr .= '<input type="hidden" name="' . $invoiceId . '" value="' . urlencode($invoiceId) . '" />';
+    $returnStr .= '<input type="hidden" name="' . $description . '" value="' . urlencode($description) . '" />';
+    $returnStr .= '<input type="hidden" name="' . $amount . '" value="' . urlencode($amount) . '" />';
+    $returnStr .= '<input type="hidden" name="' . $currencyCode . '" value="' . urlencode($currencyCode) . '" />';
+    $returnStr .= '<input type="submit" value="' . $langPayNow . '" /></form>';
 
-        <input type="invoice_number" value="' . $invoiceId . '" />
-        <input type="description" value="' . $description . '" />
-        <input type="amount" value="' . $amount . '" />
-        <input type="currency" value="' . $currencyCode . '" />
-        <input type="submit" value="' . $langPayNow . '" />
-        </form>';
+    return $returnStr;
 }
 
 /**
