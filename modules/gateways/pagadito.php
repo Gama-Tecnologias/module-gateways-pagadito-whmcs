@@ -85,10 +85,10 @@ function pagadito_config()
             'Description' => 'Enter secret key here',
         ),
         // the yesno field type displays a single checkbox option
-        'testMode' => array(
+        'sandbox_active' => array(
             'FriendlyName' => 'Test Mode',
             'Type' => 'yesno',
-            'Description' => 'Tick to enable test mode',
+            'Description' => 'Tick to enable test mode/Activar modo Pruebas',
         ),
         // the dropdown field type renders a select menu of options
         'dropdownField' => array(
