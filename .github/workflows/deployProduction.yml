@@ -1,0 +1,23 @@
+name: Publicar en gamatecnologias.com
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+jobs:
+  Compilacion-Publicacion-FrontEnd:
+    name: Publicar en gamatecnologias.com
+    runs-on: ubuntu-18.04 #ubuntu-latest
+    steps:
+      - name: Descargar codigo fuente
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 2
+
+      - name: Subir archivos por FTP al servidor
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        with:
+          server: ftp.gamatecnologias.com
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: public_html/
