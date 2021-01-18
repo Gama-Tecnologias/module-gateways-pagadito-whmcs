@@ -29,7 +29,7 @@ if (!defined("WHMCS")) {
 function pagadito_MetaData()
 {
     return array(
-        'DisplayName' => 'Pagadito Gateway Module by gamatecnologias.com',
+        'DisplayName' => 'Tarjeta de Crédito o Debito',
         'APIVersion' => '1.0.0',
         'failedEmail' => '',
         'successEmail' => '',
@@ -66,7 +66,7 @@ function pagadito_config()
         // defined here for backwards compatibility
         'FriendlyName' => array(
             'Type' => 'System',
-            'Value' => 'Tarjeta de credito y debito',
+            'Value' => 'Pagadito Gateway Module by gamatecnologias.com',
         ),
         // a text field type allows for single line text input
         'pagadito_UID' => array(
@@ -83,7 +83,7 @@ function pagadito_config()
             'Size' => '50',
             'Default' => '',
             'Description' => 'Ingreso su WSK proporcionado por Pagadito',
-        ),
+        ), 
         // the yesno field type displays a single checkbox option
         'sandbox_active' => array(
             'FriendlyName' => 'Test Mode / Pruebas',
@@ -95,7 +95,7 @@ function pagadito_config()
             'FriendlyName' => 'Texto transaccion',
             'Type' => 'text',
             'Size' => '25',
-            'Default' => '',
+            'Default' => 'Gama',
             'Description' => 'Ingrese el texto que aparecera en el estado de cuenta de su cliente.',
         ),
     );
