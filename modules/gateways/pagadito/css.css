@@ -1,6 +1,14 @@
 .form-pagadito input[type=submit] {
     padding: 5px 20px;
     margin: 6px 0;
-    background: red;
-    border: 0px;
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+    border-radius: 5px;
+    transition: all 0.5s;
+    cursor: pointer;
+    color: #fff;
+}
+
+.form-pagadito input[type=submit]:hover {
+    background-color: #469546;
 }

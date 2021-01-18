@@ -97,6 +97,14 @@ function pagadito_config()
             'Type' => 'yesno',
             'Description' => 'Habilita la recepción de pagos preautorizados para la orden de cobro.',
         ),
+        // a text field type allows for single line text input
+        'urlImagen' => array(
+            'FriendlyName' => 'URL imagen tarjetas',
+            'Type' => 'text',
+            'Size' => '100',
+            'Default' => '',
+            'Description' => 'Imagen tarjetas par ala factura',
+        ),
     );
 }
 
@@ -119,10 +127,12 @@ function pagadito_link($params)
     $returnUrl = $params['returnurl'];
     $langPayNow = $params['langpaynow'];
     $companyName = $params['companyname'];
-    
-    $returnStr = '<style>'.file_get_contents('.\modules\gateways\pagadito\css.css').'</style>';
+    $urlImagen = $params['urlImagen'];
+    if (isset($urlImagen) or empty($urlImagen) or is_null($urlImagen)) {
+        $urlImagen = '.\modules\gateways\pagadito\tarjetas-min.png';
+    }
 
-    $returnStr .= '<img src=".\modules\gateways\pagadito\tarjetas-min.png" alt="'.$companyName.'">';
+    $returnStr = '<style>' . file_get_contents(__DIR__ . '/pagadito/css.css') . '</style>';
 
     // Build button
     $returnStr .= '<form class="form-pagadito" method="post" action="' . $systemUrl . 'modules/gateways/pagadito/pagadito_procesar.php">';
@@ -136,6 +146,7 @@ function pagadito_link($params)
     $returnStr .= '<input type="hidden" name="amount" value="' . urlencode($amount) . '" />';
     $returnStr .= '<input type="hidden" name="currencyCode" value="' . urlencode($currencyCode) . '" />';
     $returnStr .= '<input type="submit" value="' . $langPayNow . '" /></form>';
+    $returnStr .= '<img src="' . $urlImagen . '" alt="' . $companyName . '">';
 
     return $returnStr;
 }
