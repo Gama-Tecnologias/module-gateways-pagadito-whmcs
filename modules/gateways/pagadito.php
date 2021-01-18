@@ -102,6 +102,95 @@ function pagadito_config()
 }
 
 /**
+ * Perform 3D Authentication.
+ *
+ * Called upon checkout using a credit card.
+ *
+ * Optional: Exclude this function if your merchant gateway does not support
+ * 3D Secure Authentication.
+ *
+ * @param array $params Payment Gateway Module Parameters
+ *
+ * @see https://developers.whmcs.com/payment-gateways/3d-secure/
+ *
+ * @return string 3D Secure Form
+ */
+function pagadito_3dsecure($params)
+{
+    // Gateway Configuration Parameters
+    $pagaditoUID = $params['pagadito_UID'];
+    $pagaditoWSK = $params['pagadito_WSK'];
+    $sandboxActive = $params['sandbox_active'];
+    $textTransaction = $params['text_transaction'];17 Enero
+
+    // Invoice Parameters
+    $invoiceId = $params['invoiceid'];
+    $description = $params["description"];
+    $amount = $params['amount'];
+    $currencyCode = $params['currency'];
+
+    // Credit Card Parameters
+    $cardType = $params['cardtype'];
+    $cardNumber = $params['cardnum'];
+    $cardExpiry = $params['cardexp'];
+    $cardStart = $params['cardstart'];
+    $cardIssueNumber = $params['cardissuenum'];
+    $cardCvv = $params['cccvv'];
+
+    // Client Parameters
+    $firstname = $params['clientdetails']['firstname'];
+    $lastname = $params['clientdetails']['lastname'];
+    $email = $params['clientdetails']['email'];
+    $address1 = $params['clientdetails']['address1'];
+    $address2 = $params['clientdetails']['address2'];
+    $city = $params['clientdetails']['city'];
+    $state = $params['clientdetails']['state'];
+    $postcode = $params['clientdetails']['postcode'];
+    $country = $params['clientdetails']['country'];
+    $phone = $params['clientdetails']['phonenumber'];
+
+    // System Parameters
+    $companyName = $params['companyname'];
+    $systemUrl = $params['systemurl'];
+    $returnUrl = $params['returnurl'];
+    $langPayNow = $params['langpaynow'];
+    $moduleDisplayName = $params['name'];
+    $moduleName = $params['paymentmethod'];
+    $whmcsVersion = $params['whmcsVersion'];
+
+    // Return HTML form for redirecting user to 3D Auth.
+    $url = 'https://www.demopaymentgateway.com/do.3dauth';
+
+    $postfields = array(
+        'account_id' => $accountId,
+        'invoice_id' => $invoiceId,
+        'amount' => $amount,
+        'currency' => $currencyCode,
+        'card_type' => $cardType,
+        'card_number' => $cardNumber,
+        'card_expiry_month' => substr($cardExpiry, 0, 2),
+        'card_expiry_year' => substr($cardExpiry, 2, 2),
+        'card_cvv' => $cardCvv,
+        'card_holder_name' => $firstname . ' ' . $lastname,
+        'card_holder_address' => $address1,
+        'card_holder_city' => $city,
+        'card_holder_state' => $state,
+        'card_holder_zip' => $postcode,
+        'card_holder_country' => $country,
+        'return_url' => $systemUrl . '/modules/gateways/callback/' . $moduleName . '.php',
+    );
+
+    $htmlOutput = '<form method="post" action="' . $url . '">';
+    foreach ($postfields as $k => $v) {
+        $htmlOutput .= '<input type="hidden" name="' . $k . '" value="' . urlencode($v) . '" />';
+    }
+    $htmlOutput .= '<input type="submit" value="' . $langPayNow . '" />';
+    $htmlOutput .= '</form>';
+
+    return $htmlOutput;
+}
+
+/**
  * Capture payment.
  *
  * Called when a payment is to be processed and captured.
@@ -115,7 +204,7 @@ function pagadito_config()
  *
  * @return array Transaction response status
  */
-function pagadito_capture($params)
+function pagadito_capture2($params)
 {
     // Gateway Configuration Parameters
     $accountId = $params['accountID'];
