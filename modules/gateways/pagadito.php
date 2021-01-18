@@ -91,13 +91,11 @@ function pagadito_config()
             'Type' => 'yesno',
             'Description' => 'Tick to enable test mode/Activar modo Pruebas',
         ),
-        // a text field type allows for single line text input
-        'text_transaction' => array(
-            'FriendlyName' => 'Texto transaccion',
-            'Type' => 'text',
-            'Size' => '25',
-            'Default' => 'Gama',
-            'Description' => 'Ingrese el texto que aparecera en el estado de cuenta de su cliente.',
+        // the yesno field type displays a single checkbox option
+        'pagos_preautorizados' => array(
+            'FriendlyName' => 'Pagos Preautorizados',
+            'Type' => 'yesno',
+            'Description' => 'Habilita la recepción de pagos preautorizados para la orden de cobro.',
         ),
     );
 }
@@ -108,7 +106,7 @@ function pagadito_link($params)
     $pagaditoUID = $params['pagadito_UID'];
     $pagaditoWSK = $params['pagadito_WSK'];
     $sandboxActive = $params['sandbox_active'];
-    $textTransaction = $params['text_transaction'];
+    $pagosPreautorizados = $params['pagos_preautorizados'];
 
     // Invoice Parameters
     $invoiceId = $params['invoiceid'];
@@ -135,7 +133,7 @@ function pagadito_link($params)
         <input type="pagaditoUID" value="' . $pagaditoUID . '" />
         <input type="pagaditoWSK" value="' . $pagaditoWSK . '" />
         <input type="sandboxActive" value="' . $sandboxActive . '" />
-        <input type="textTransaction" value="' . $textTransaction . '" />
+        <input type="pagosPreautorizados" value="' . $pagosPreautorizados . '" />
 
         <input type="invoice_number" value="' . $invoiceId . '" />
         <input type="description" value="' . $description . '" />
