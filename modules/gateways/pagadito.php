@@ -1,4 +1,5 @@
 <?php
+
 /** 7.7 minimo
  * Esto es parte del modulo para procesar pagos con el API de la empresa Pagadito.
  *
@@ -11,8 +12,6 @@
  * @version     PHP 1.0.0
  * @link        https://www.gamatecnologias.com/
  */
-
- require_once __DIR__ ."/../pagadito/pagadito_api.php";
 
 if (!defined("WHMCS")) {
     die("This file cannot be accessed directly");
@@ -85,7 +84,7 @@ function pagadito_config()
             'Size' => '50',
             'Default' => '',
             'Description' => 'Ingreso su WSK proporcionado por Pagadito',
-        ), 
+        ),
         // the yesno field type displays a single checkbox option
         'sandbox_active' => array(
             'FriendlyName' => 'Test Mode / Pruebas',
@@ -103,7 +102,8 @@ function pagadito_config()
     );
 }
 
-function pagadito_link($params) {
+function pagadito_link($params)
+{
     // Gateway Configuration Parameters
     $pagaditoUID = $params['pagadito_UID'];
     $pagaditoWSK = $params['pagadito_WSK'];
@@ -116,12 +116,32 @@ function pagadito_link($params) {
     $amount = $params['amount'];
     $currencyCode = $params['currency'];
 
-    return '<form method="post" action="https://www.example.com/checkout">
-        <input type="invoice_number" value="' . $params['invoiceid'] . '" />
-        <input type="description" value="' . $params['description'] . '" />
-        <input type="amount" value="' . $params['amount'] . '" />
-        <input type="currency" value="' . $params['currency'] . '" />
-        <input type="submit" value="' . $params['langpaynow'] . '" />
+    // System Parameters
+    $companyName = $params['companyname'];
+    $systemUrl = $params['systemurl'];
+    $returnUrl = $params['returnurl'];
+    $langPayNow = $params['langpaynow'];
+    $moduleDisplayName = $params['name'];
+    $moduleName = $params['paymentmethod'];
+    $whmcsVersion = $params['whmcsVersion'];
+
+    return '<form method="post" action="' . $systemUrl . '">
+        <input type="companyName" value="' . $companyName . '" />
+        <input type="returnUrl" value="' . $returnUrl . '" />
+        <input type="moduleDisplayName" value="' . $moduleDisplayName . '" />
+        <input type="moduleName" value="' . $moduleName . '" />
+        <input type="whmcsVersion" value="' . $whmcsVersion . '" />
+    
+        <input type="pagaditoUID" value="' . $pagaditoUID . '" />
+        <input type="pagaditoWSK" value="' . $pagaditoWSK . '" />
+        <input type="sandboxActive" value="' . $sandboxActive . '" />
+        <input type="textTransaction" value="' . $textTransaction . '" />
+
+        <input type="invoice_number" value="' . $invoiceId . '" />
+        <input type="description" value="' . $description . '" />
+        <input type="amount" value="' . $amount . '" />
+        <input type="currency" value="' . $currencyCode . '" />
+        <input type="submit" value="' . $langPayNow . '" />
         </form>';
 }
 
