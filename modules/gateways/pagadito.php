@@ -230,6 +230,32 @@ function pagadito_link($params)
     $param4 = paramOpcional('param4', $params);
     $param5 = paramOpcional('param5', $params);
 
+    //Captura algun mensaje
+    $mensaje = $_GET["st"];
+    switch ($mensaje) {
+        case "COM": // COMPLETED -> La transacción ha sido procesada correctamente en Pagadito.
+            $mensaje = '<div class="alert alert-success">Transacción exitosa.</div>';
+        case "REG": // REGISTERED -> La transacción ha sido registrada correctamente en Pagadito pero el pago aún se encuentra en proceso.
+            $mensaje = '<div class="alert alert-info">Transacción se encuentra en proceso.</div>';
+        case "VER": // VERIFYING -> La transacción ha sido procesada en Pagadito, pero el pago ha quedado en revisión
+            $mensaje = '<div class="alert alert-info">Transacción se encuentra en proceso.</div>';
+        case "REV": // REVOKED -> La transacción que tenía estado VERIFYING ha sido denegada por Pagadito.
+            $mensaje = '<div class="alert alert-danger">Transacción denegada.</div>';
+        case "FAI": // FAILED -> La transacción no pudo ser procesada
+            $mensaje = '<div class="alert alert-danger">Transacción denegada.</div>';
+        case "CAN": // CANCELED -> La transacción ha sido cancelada por el usuario en Pagadito
+            $mensaje = '<div class="alert alert-info">Transacción cancelada.</div>';
+        case "EXP": // EXPIRED -> La transacción ha expirado en Pagadito luego de 10 minutos
+            $mensaje = '<div class="alert alert-info">Se expiro su tiempo, puede volver a intentarlo</div>';
+        case "PET": // En caso de fallar la petición
+            $mensaje = '<div class="alert alert-warning">Fallo interno, intentelo luego</div>';
+        case "CON": // En caso de fallar la conexión
+            $mensaje = '<div class="alert alert-warning">Fallo interno, intentelo luego</div>';
+        default:
+            $mensaje = "";
+            break;
+    }
+
     // Build button
     $returnStr = '<style>' . file_get_contents(__DIR__ . '/pagadito/css.css') . '</style>';
     $returnStr .= '<form class="form-pagadito" method="post" action="' . $systemUrl . 'modules/gateways/pagadito/pagadito_procesar.php">';
@@ -248,7 +274,8 @@ function pagadito_link($params)
     $returnStr .= '<input type="hidden" name="param4" value="' . urlencode($param4) . '" />';
     $returnStr .= '<input type="hidden" name="param5" value="' . urlencode($param5) . '" />';
     $returnStr .= '<input type="submit" value="' . $langPayNow . '" />';
-    $returnStr .= '<img src="' . (empty($urlImagen) ? '.\modules\gateways\pagadito\tarjetas-min.png' : $urlImagen) . '" alt="' . $companyName . '"></form>';
+    $returnStr .= '<img src="' . (empty($urlImagen) ? '.\modules\gateways\pagadito\tarjetas-min.png' : $urlImagen) . '" alt="' . $companyName . '">';
+    $returnStr .= $mensaje . '</form>';
 
     return $returnStr;
 }
