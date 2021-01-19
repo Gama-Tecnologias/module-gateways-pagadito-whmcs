@@ -41,18 +41,6 @@ function pagadito_MetaData()
 /**
  * Define gateway configuration options.
  *
- * The fields you define here determine the configuration options that are
- * presented to administrator users when activating and configuring your
- * payment gateway module for use.
- *
- * Supported field types include:
- * * text
- * * password
- * * yesno
- * * dropdown
- * * radio
- * * textarea
- *
  * Examples of each field type and their possible configuration parameters are
  * provided in the sample function below.
  *
@@ -63,13 +51,10 @@ function pagadito_MetaData()
 function pagadito_config()
 {
     return array(
-        // the friendly display name for a payment gateway should be
-        // defined here for backwards compatibility
         'FriendlyName' => array(
             'Type' => 'System',
             'Value' => 'Pagadito Gateway Module by gamatecnologias.com',
         ),
-        // a text field type allows for single line text input
         'pagadito_UID' => array(
             'FriendlyName' => 'Pagadito UID',
             'Type' => 'password',
@@ -77,7 +62,6 @@ function pagadito_config()
             'Default' => '',
             'Description' => 'Ingreso su UID proporcionado por Pagadito',
         ),
-        // a text field type allows for single line text input
         'pagadito_WSK' => array(
             'FriendlyName' => 'Pagadito WSK',
             'Type' => 'password',
@@ -85,19 +69,16 @@ function pagadito_config()
             'Default' => '',
             'Description' => 'Ingreso su WSK proporcionado por Pagadito',
         ),
-        // the yesno field type displays a single checkbox option
         'sandbox_active' => array(
             'FriendlyName' => 'Test Mode / Pruebas',
             'Type' => 'yesno',
             'Description' => 'Tick to enable test mode/Activar modo Pruebas',
         ),
-        // the yesno field type displays a single checkbox option
         'pagos_preautorizados' => array(
             'FriendlyName' => 'Pagos Preautorizados',
             'Type' => 'yesno',
             'Description' => 'Habilita la recepción de pagos preautorizados para la orden de cobro.',
         ),
-        // a text field type allows for single line text input
         'urlImagen' => array(
             'FriendlyName' => 'URL imagen tarjetas',
             'Type' => 'text',
@@ -105,11 +86,11 @@ function pagadito_config()
             'Default' => '',
             'Description' => 'Imagen tarjetas par ala factura, 200px por 30px maximo',
         ),
-        // the dropdown field type renders a select menu of options
         'param1' => array(
             'FriendlyName' => 'Parametro #1',
             'Type' => 'dropdown',
             'Options' => array(
+                'noenviar' => 'No enviar',
                 'invoiceid' => 'Numero Factura',
                 'description' => 'Descripcion',
                 'amount' => 'Monto total',
@@ -117,22 +98,99 @@ function pagadito_config()
                 'lastname' => 'Apellidos',
                 'email' => 'Correo electronico',
                 'address1' => 'Direción 1',
-                'address2' => 'Dirección 2', 
+                'address2' => 'Dirección 2',
                 'city' => 'Ciudad',
-                'state' => 'Estado',                
-                'postcode' => 'Codigo Postal', 
-                'country' => 'Pais', 
-                'noenviar' => 'No enviar', 
+                'state' => 'Estado',
+                'postcode' => 'Codigo Postal',
+                'country' => 'Pais',
             ),
             'Default' => 'noenviar',
             'Description' => 'Parametro #1 que se va a enviar a Pagadito',
         ),
-
-
-
-
-
-
+        'param2' => array(
+            'FriendlyName' => 'Parametro #2',
+            'Type' => 'dropdown',
+            'Options' => array(
+                'noenviar' => 'No enviar',
+                'invoiceid' => 'Numero Factura',
+                'description' => 'Descripcion',
+                'amount' => 'Monto total',
+                'firstname' => 'Nombre',
+                'lastname' => 'Apellidos',
+                'email' => 'Correo electronico',
+                'address1' => 'Direción 1',
+                'address2' => 'Dirección 2',
+                'city' => 'Ciudad',
+                'state' => 'Estado',
+                'postcode' => 'Codigo Postal',
+                'country' => 'Pais',
+            ),
+            'Default' => 'noenviar',
+            'Description' => 'Parametro #2 que se va a enviar a Pagadito',
+        ),
+        'param3' => array(
+            'FriendlyName' => 'Parametro #3',
+            'Type' => 'dropdown',
+            'Options' => array(
+                'noenviar' => 'No enviar',
+                'invoiceid' => 'Numero Factura',
+                'description' => 'Descripcion',
+                'amount' => 'Monto total',
+                'firstname' => 'Nombre',
+                'lastname' => 'Apellidos',
+                'email' => 'Correo electronico',
+                'address1' => 'Direción 1',
+                'address2' => 'Dirección 2',
+                'city' => 'Ciudad',
+                'state' => 'Estado',
+                'postcode' => 'Codigo Postal',
+                'country' => 'Pais',
+            ),
+            'Default' => 'noenviar',
+            'Description' => 'Parametro #3 que se va a enviar a Pagadito',
+        ),
+        'param4' => array(
+            'FriendlyName' => 'Parametro #4',
+            'Type' => 'dropdown',
+            'Options' => array(
+                'noenviar' => 'No enviar',
+                'invoiceid' => 'Numero Factura',
+                'description' => 'Descripcion',
+                'amount' => 'Monto total',
+                'firstname' => 'Nombre',
+                'lastname' => 'Apellidos',
+                'email' => 'Correo electronico',
+                'address1' => 'Direción 1',
+                'address2' => 'Dirección 2',
+                'city' => 'Ciudad',
+                'state' => 'Estado',
+                'postcode' => 'Codigo Postal',
+                'country' => 'Pais',
+            ),
+            'Default' => 'noenviar',
+            'Description' => 'Parametro #4 que se va a enviar a Pagadito',
+        ),
+        'param5' => array(
+            'FriendlyName' => 'Parametro #5',
+            'Type' => 'dropdown',
+            'Options' => array(
+                'noenviar' => 'No enviar',
+                'invoiceid' => 'Numero Factura',
+                'description' => 'Descripcion',
+                'amount' => 'Monto total',
+                'firstname' => 'Nombre',
+                'lastname' => 'Apellidos',
+                'email' => 'Correo electronico',
+                'address1' => 'Direción 1',
+                'address2' => 'Dirección 2',
+                'city' => 'Ciudad',
+                'state' => 'Estado',
+                'postcode' => 'Codigo Postal',
+                'country' => 'Pais',
+            ),
+            'Default' => 'noenviar',
+            'Description' => 'Parametro #5 que se va a enviar a Pagadito',
+        ),
     );
 }
 
@@ -157,6 +215,43 @@ function pagadito_link($params)
     $companyName = $params['companyname'];
     $urlImagen = $params['urlImagen'];
 
+    //Parametros opcionales
+    $param1 = "noenviar";
+    switch ($params['param1']) {
+        case "invoiceid" or "description" or "amount":
+            $param1 = $params[$params['param1']];
+        case "firstname" or "lastname" or "email" or "address1" or "address2" or "city" or "state" or "postcode" or "country":
+            $param1 = $params['clientdetails'][$params['param1']];
+    }
+    $param2 = "noenviar";
+    switch ($params['param2']) {
+        case "invoiceid" or "description" or "amount":
+            $param2 = $params[$params['param2']];
+        case "firstname" or "lastname" or "email" or "address1" or "address2" or "city" or "state" or "postcode" or "country":
+            $param2 = $params['clientdetails'][$params['param2']];
+    }
+    $param3 = "noenviar";
+    switch ($params['param3']) {
+        case "invoiceid" or "description" or "amount":
+            $param3 = $params[$params['param3']];
+        case "firstname" or "lastname" or "email" or "address1" or "address2" or "city" or "state" or "postcode" or "country":
+            $param3 = $params['clientdetails'][$params['param3']];
+    }
+    $param4 = "noenviar";
+    switch ($params['param4']) {
+        case "invoiceid" or "description" or "amount":
+            $param4 = $params[$params['param4']];
+        case "firstname" or "lastname" or "email" or "address1" or "address2" or "city" or "state" or "postcode" or "country":
+            $param4 = $params['clientdetails'][$params['param4']];
+    }
+    $param5 = "noenviar";
+    switch ($params['param5']) {
+        case "invoiceid" or "description" or "amount":
+            $param5 = $params[$params['param5']];
+        case "firstname" or "lastname" or "email" or "address1" or "address2" or "city" or "state" or "postcode" or "country":
+            $param5 = $params['clientdetails'][$params['param5']];
+    }
+
     // Build button
     $returnStr = '<style>' . file_get_contents(__DIR__ . '/pagadito/css.css') . '</style>';
     $returnStr .= '<form class="form-pagadito" method="post" action="' . $systemUrl . 'modules/gateways/pagadito/pagadito_procesar.php">';
@@ -169,6 +264,11 @@ function pagadito_link($params)
     $returnStr .= '<input type="hidden" name="description" value="' . urlencode($description) . '" />';
     $returnStr .= '<input type="hidden" name="amount" value="' . urlencode($amount) . '" />';
     $returnStr .= '<input type="hidden" name="currencyCode" value="' . urlencode($currencyCode) . '" />';
+    $returnStr .= '<input type="hidden" name="param1" value="' . urlencode($param1) . '" />';
+    $returnStr .= '<input type="hidden" name="param2" value="' . urlencode($param2) . '" />';
+    $returnStr .= '<input type="hidden" name="param3" value="' . urlencode($param3) . '" />';
+    $returnStr .= '<input type="hidden" name="param4" value="' . urlencode($param4) . '" />';
+    $returnStr .= '<input type="hidden" name="param5" value="' . urlencode($param5) . '" />';
     $returnStr .= '<input type="submit" value="' . $langPayNow . '" />';
     $returnStr .= '<img src="' . (empty($urlImagen) ? '.\modules\gateways\pagadito\tarjetas-min.png' : $urlImagen) . '" alt="' . $companyName . '"></form>';
 

@@ -8,6 +8,11 @@ echo 'invoiceId :' . urldecode($_POST["invoiceId"]) . '</br>';
 echo 'description :' . urldecode($_POST["description"]) . '</br>';
 echo 'amount :' . urldecode($_POST["amount"]) . '</br>';
 echo 'currencyCode :' . urldecode($_POST["currencyCode"]) . '</br>';
+echo 'param1 :' . urldecode($_POST["param1"]) . '</br>';
+echo 'param2 :' . urldecode($_POST["param2"]) . '</br>';
+echo 'param3 :' . urldecode($_POST["param3"]) . '</br>';
+echo 'param4 :' . urldecode($_POST["param4"]) . '</br>';
+echo 'param5 :' . urldecode($_POST["param5"]) . '</br>';
 
 // Importacion de libreria necesaria para realizar los pagos Pagadito
 require_once __DIR__ . "/pagadito_api.php";
@@ -22,6 +27,11 @@ $invoiceId = urldecode($_POST["invoiceId"]);
 $description = urldecode($_POST["description"]);
 $amount = urldecode($_POST["amount"]);
 $currencyCode = urldecode($_POST["currencyCode"]);
+$param1 = urldecode($_POST["param1"]);
+$param2 = urldecode($_POST["param2"]);
+$param3 = urldecode($_POST["param3"]);
+$param4 = urldecode($_POST["param4"]);
+$param5 = urldecode($_POST["param5"]);
 
 if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
     /*
@@ -49,13 +59,12 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
         $Pagadito->add_detail(1, $description, $amount, $returnUrl);
 
         //Agregando campos personalizados de la transacción
-        /*  
-        $Pagadito->set_custom_param("param1", "Valor de param1");
-        $Pagadito->set_custom_param("param2", "Valor de param2");
-        $Pagadito->set_custom_param("param3", "Valor de param3");
-        $Pagadito->set_custom_param("param4", "Valor de param4");
-        $Pagadito->set_custom_param("param5", "Valor de param5");*/
-
+        if ($param1 !== "noenviar") $Pagadito->set_custom_param("param1", $param1);
+        if ($param2 !== "noenviar") $Pagadito->set_custom_param("param2", $param2);
+        if ($param3 !== "noenviar") $Pagadito->set_custom_param("param3", $param3);
+        if ($param4 !== "noenviar") $Pagadito->set_custom_param("param4", $param4);
+        if ($param5 !== "noenviar") $Pagadito->set_custom_param("param5", $param5);
+        
         //Habilita la recepción de pagos preautorizados para la orden de cobro.
         if ($pagosPreautorizados == "on") {
             $Pagadito->enable_pending_payments();
