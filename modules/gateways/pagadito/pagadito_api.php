@@ -292,8 +292,11 @@ class Pagadito
      * @return string
      */
     public function get_commision()
-    {
-        return $this->return_attr_value("amount") * 0.05;// Se debe validar o conseguir este dato con la gente de Pagadito
+    {// Forumula 5% + $0.25 + Impuesto Local
+        $valor = $this->return_attr_value("amount") * 0.05;
+        $valor = $valor + 0.25;
+        $valor = $valor + ($valor * 0.13);
+        return $valor;
     }
 
     //*********************************** Funciones Públicas auxiliares
