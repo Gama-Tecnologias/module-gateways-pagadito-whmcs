@@ -1,29 +1,29 @@
 <?php
-echo 'returnUrl :' . $_POST["returnUrl"] . '</br>';
-echo 'pagaditoUID :' . $_POST["pagaditoUID"] . '</br>';
-echo 'pagaditoWSK :' . $_POST["pagaditoWSK"] . '</br>';
-echo 'sandboxActive :' . $_POST["sandboxActive"] . '</br>';
-echo 'pagosPreautorizados :' . $_POST["pagosPreautorizados"] . '</br>';
-echo 'invoiceId :' . $_POST["invoiceId"] . '</br>';
-echo 'description :' . $_POST["description"] . '</br>';
-echo 'amount :' . $_POST["amount"] . '</br>';
-echo 'currencyCode :' . $_POST["currencyCode"] . '</br>';
+echo 'returnUrl :' . urldecode($_POST["returnUrl"])  . '</br>';
+echo 'pagaditoUID :' . urldecode($_POST["pagaditoUID"]) . '</br>';
+echo 'pagaditoWSK :' . urldecode($_POST["pagaditoWSK"]) . '</br>';
+echo 'sandboxActive :' . urldecode($_POST["sandboxActive"]) . '</br>';
+echo 'pagosPreautorizados :' . urldecode($_POST["pagosPreautorizados"]) . '</br>';
+echo 'invoiceId :' . urldecode($_POST["invoiceId"]) . '</br>';
+echo 'description :' . urldecode($_POST["description"]) . '</br>';
+echo 'amount :' . urldecode($_POST["amount"]) . '</br>';
+echo 'currencyCode :' . urldecode($_POST["currencyCode"]) . '</br>';
 
 // Importacion de libreria necesaria para realizar los pagos Pagadito
 require_once __DIR__ . "/pagadito_api.php";
 
 //Variables enviadas por el proceso de pago
-$returnUrl = $_POST["returnUrl"];
-$pagaditoUID = $_POST["pagaditoUID"];
-$pagaditoWSK = $_POST["pagaditoWSK"];
-$sandboxActive = $_POST["sandboxActive"];
-$pagosPreautorizados = $_POST["pagosPreautorizados"];
-$invoiceId = $_POST["invoiceId"];
-$description = $_POST["description"];
-$amount = $_POST["amount"];
-$currencyCode = $_POST["currencyCode"];
+$returnUrl = urldecode($_POST["returnUrl"]);
+$pagaditoUID = urldecode($_POST["pagaditoUID"]);
+$pagaditoWSK = urldecode($_POST["pagaditoWSK"]);
+$sandboxActive = urldecode($_POST["sandboxActive"]);
+$pagosPreautorizados = urldecode($_POST["pagosPreautorizados"]);
+$invoiceId = urldecode($_POST["invoiceId"]);
+$description = urldecode($_POST["description"]);
+$amount = urldecode($_POST["amount"]);
+$currencyCode = urldecode($_POST["currencyCode"]);
 
-if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK) ) {
+if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
     /*
     * Lo primero es crear el objeto nusoap_client, al que se le pasa como
     * parámetro la URL de Conexión definida en la constante WSPG
@@ -49,7 +49,8 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK) ) {
         $Pagadito->add_detail(1, $description, $amount, $returnUrl);
 
         //Agregando campos personalizados de la transacción
-      /*  $Pagadito->set_custom_param("param1", "Valor de param1");
+        /*  
+        $Pagadito->set_custom_param("param1", "Valor de param1");
         $Pagadito->set_custom_param("param2", "Valor de param2");
         $Pagadito->set_custom_param("param3", "Valor de param3");
         $Pagadito->set_custom_param("param4", "Valor de param4");
@@ -59,7 +60,7 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK) ) {
         if ($pagosPreautorizados == "on") {
             $Pagadito->enable_pending_payments();
         }
-        
+
         /*
          * Lo siguiente es ejecutar la transacción, enviandole el ern
          */
@@ -69,26 +70,8 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK) ) {
              * Debido a que la API nos puede devolver diversos mensajes de
              * respuesta, validamos el tipo de mensaje que nos devuelve.
              */
-            switch ($Pagadito->get_rs_code()) {
-                case "PG2001":
-                    /*Incomplete data*/
-                case "PG3002":
-                    /*Error*/
-                case "PG3003":
-                    /*Unregistered transaction*/
-                case "PG3004":
-                    /*Match error*/
-                case "PG3005":
-                    /*Disabled connection*/
-                default:
-                    echo "
-                        <SCRIPT>
-                            alert(\"" . $Pagadito->get_rs_code() . ": " . $Pagadito->get_rs_message() . "\");
-                            location.href = 'index.php';
-                        </SCRIPT>
-                    ";
-                    break;
-            }
+
+            echo "<SCRIPT> alert(\"" . $Pagadito->get_rs_code() . ": " . $Pagadito->get_rs_message() . "\"); location.href = 'index.php'; </SCRIPT> ";
         }
     } else {
         /*
@@ -96,29 +79,8 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK) ) {
          * Debido a que la API nos puede devolver diversos mensajes de
          * respuesta, validamos el tipo de mensaje que nos devuelve.
          */
-        switch ($Pagadito->get_rs_code()) {
-            case "PG2001":
-                /*Incomplete data*/
-            case "PG3001":
-                /*Problem connection*/
-            case "PG3002":
-                /*Error*/
-            case "PG3003":
-                /*Unregistered transaction*/
-            case "PG3005":
-                /*Disabled connection*/
-            case "PG3006":
-                /*Exceeded*/
-            default:
-                echo "
-                    <SCRIPT>
-                        alert(\"" . $Pagadito->get_rs_code() . ": " . $Pagadito->get_rs_message() . "\");
-                        location.href = 'index.php';
-                    </SCRIPT>
-                ";
-                break;
-        }
+        echo "<SCRIPT> alert(\"" . $Pagadito->get_rs_code() . ": " . $Pagadito->get_rs_message() . "\"); location.href = 'index.php'; </SCRIPT> ";
     }
-}else{
-    echo "<SCRIPT> location.href = 'index.php';</SCRIPT>";
+} else {
+    header('Location: /index.php');    
 }

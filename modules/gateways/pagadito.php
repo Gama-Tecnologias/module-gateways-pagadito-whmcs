@@ -105,6 +105,34 @@ function pagadito_config()
             'Default' => '',
             'Description' => 'Imagen tarjetas par ala factura, 200px por 30px maximo',
         ),
+        // the dropdown field type renders a select menu of options
+        'param1' => array(
+            'FriendlyName' => 'Parametro #1',
+            'Type' => 'dropdown',
+            'Options' => array(
+                'invoiceid' => 'Numero Factura',
+                'description' => 'Descripcion',
+                'amount' => 'Monto total',
+                'firstname' => 'Nombre',
+                'lastname' => 'Apellidos',
+                'email' => 'Correo electronico',
+                'address1' => 'Direción 1',
+                'address2' => 'Dirección 2', 
+                'city' => 'Ciudad',
+                'state' => 'Estado',                
+                'postcode' => 'Codigo Postal', 
+                'country' => 'Pais', 
+                'noenviar' => 'No enviar', 
+            ),
+            'Default' => 'noenviar',
+            'Description' => 'Parametro #1 que se va a enviar a Pagadito',
+        ),
+
+
+
+
+
+
     );
 }
 
