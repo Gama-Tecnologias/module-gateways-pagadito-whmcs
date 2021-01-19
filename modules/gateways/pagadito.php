@@ -32,9 +32,6 @@ function pagadito_MetaData()
     return array(
         'DisplayName' => 'Tarjeta de Crédito o Debito',
         'APIVersion' => '1.0.0',
-        'failedEmail' => '',
-        'successEmail' => '',
-        'pendingEmail' => '',
     );
 }
 

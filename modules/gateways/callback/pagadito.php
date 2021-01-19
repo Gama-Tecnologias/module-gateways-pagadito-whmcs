@@ -39,6 +39,20 @@ if (!$gatewayParams['type']) {
 }
 
 if (isset($_GET["token"]) && $_GET["token"] != "") {
+    /**
+     * Validate Callback Invoice ID.
+     *
+     * Checks invoice ID is a valid invoice number. Note it will count an
+     * invoice in any status as valid.
+     *
+     * Performs a die upon encountering an invalid Invoice ID.
+     *
+     * Returns a normalised invoice ID.
+     *
+     * @param int $invoiceId
+     * @param string $gatewayName
+     */
+    $invoiceId = checkCbInvoiceID($invoiceId, $gatewayModuleName);
     /*
      * Lo primero es crear el objeto Pagadito, al que se le pasa como
      * parámetros el UID y el WSK definidos en config.php
@@ -70,15 +84,20 @@ if (isset($_GET["token"]) && $_GET["token"] != "") {
             logTransaction($gatewayModuleName, $_POST, $Pagadito->get_rs_status());
 
             switch ($Pagadito->get_rs_status()) {
-                case "COMPLETED":
-                    /*
-                     * Tratamiento para una transacción exitosa.
-                     */
-                    //$paymentAmount = Capsule::table('tblinvoices')->where('id', $invoiceId)->get("total");
-                    $paymentAmount = $Pagadito->calc_amount();
-                    $paymentFee = $Pagadito->return_attr_value();
+                case "COMPLETED": //Tratamiento para una transacción exitosa.                 
+                    $transactionId = $Pagadito->get_rs_reference();
+                    /**
+                     * Check Callback Transaction ID.
+                     *
+                     * Performs a check for any existing transactions with the same given
+                     * transaction number.
+                     *
+                     * Performs a die upon encountering a duplicate.
 
-                    addInvoicePayment($invoiceId, $Pagadito->get_rs_reference(), $paymentAmount , $paymentFee, $gatewayModuleName);
+                     * @param string $transactionId
+                     */
+                    checkCbTransID($transactionId);
+                    addInvoicePayment($invoiceId, $transactionId, $Pagadito->get_total_amount(), $Pagadito->get_commision(), $gatewayModuleName);
                     break;
                 case "REGISTERED":
 
