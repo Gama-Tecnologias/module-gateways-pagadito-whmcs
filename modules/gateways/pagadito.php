@@ -203,7 +203,7 @@ function pagadito_link($params)
     $pagosPreautorizados = $params['pagos_preautorizados'];
 
     // Invoice Parameters
-    $invoiceId = $params['invoiceid'];
+    $invoiceid = $params['invoiceid'];
     $description = $params["description"];
     $amount = $params['amount'];
     $currencyCode = $params['currency'];
@@ -219,7 +219,7 @@ function pagadito_link($params)
     $param1 = "noenviar";
     switch ($params['param1']) {
         case "invoiceid" or "description" or "amount":
-            $param1 = $params[$params['param1']];
+            $param1 = $params['param1'];
         case "firstname" or "lastname" or "email" or "address1" or "address2" or "city" or "state" or "postcode" or "country":
             $param1 = $params['clientdetails'][$params['param1']];
     }
@@ -260,7 +260,7 @@ function pagadito_link($params)
     $returnStr .= '<input type="hidden" name="pagaditoWSK" value="' . urlencode($pagaditoWSK) . '" />';
     $returnStr .= '<input type="hidden" name="sandboxActive" value="' . urlencode($sandboxActive) . '" />';
     $returnStr .= '<input type="hidden" name="pagosPreautorizados" value="' . urlencode($pagosPreautorizados) . '" />';
-    $returnStr .= '<input type="hidden" name="invoiceId" value="' . urlencode($invoiceId) . '" />';
+    $returnStr .= '<input type="hidden" name="invoiceid" value="' . urlencode($invoiceid) . '" />';
     $returnStr .= '<input type="hidden" name="description" value="' . urlencode($description) . '" />';
     $returnStr .= '<input type="hidden" name="amount" value="' . urlencode($amount) . '" />';
     $returnStr .= '<input type="hidden" name="currencyCode" value="' . urlencode($currencyCode) . '" />';

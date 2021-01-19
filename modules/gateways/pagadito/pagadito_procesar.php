@@ -4,7 +4,7 @@ echo 'pagaditoUID :' . urldecode($_POST["pagaditoUID"]) . '</br>';
 echo 'pagaditoWSK :' . urldecode($_POST["pagaditoWSK"]) . '</br>';
 echo 'sandboxActive :' . urldecode($_POST["sandboxActive"]) . '</br>';
 echo 'pagosPreautorizados :' . urldecode($_POST["pagosPreautorizados"]) . '</br>';
-echo 'invoiceId :' . urldecode($_POST["invoiceId"]) . '</br>';
+echo 'invoiceid :' . urldecode($_POST["invoiceid"]) . '</br>';
 echo 'description :' . urldecode($_POST["description"]) . '</br>';
 echo 'amount :' . urldecode($_POST["amount"]) . '</br>';
 echo 'currencyCode :' . urldecode($_POST["currencyCode"]) . '</br>';
@@ -23,7 +23,7 @@ $pagaditoUID = urldecode($_POST["pagaditoUID"]);
 $pagaditoWSK = urldecode($_POST["pagaditoWSK"]);
 $sandboxActive = urldecode($_POST["sandboxActive"]);
 $pagosPreautorizados = urldecode($_POST["pagosPreautorizados"]);
-$invoiceId = urldecode($_POST["invoiceId"]);
+$invoiceid = urldecode($_POST["invoiceid"]);
 $description = urldecode($_POST["description"]);
 $amount = urldecode($_POST["amount"]);
 $currencyCode = urldecode($_POST["currencyCode"]);
@@ -73,7 +73,7 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
         /*
          * Lo siguiente es ejecutar la transacción, enviandole el ern
          */
-        if (!$Pagadito->exec_trans($invoiceId)) {
+        if (!$Pagadito->exec_trans($invoiceid)) {
             /*
              * En caso de fallar la transacción, verificamos el error devuelto.
              * Debido a que la API nos puede devolver diversos mensajes de
