@@ -1,19 +1,4 @@
 <?php
-echo 'returnUrl :' . urldecode($_POST["returnUrl"])  . '</br>';
-echo 'pagaditoUID :' . urldecode($_POST["pagaditoUID"]) . '</br>';
-echo 'pagaditoWSK :' . urldecode($_POST["pagaditoWSK"]) . '</br>';
-echo 'sandboxActive :' . urldecode($_POST["sandboxActive"]) . '</br>';
-echo 'pagosPreautorizados :' . urldecode($_POST["pagosPreautorizados"]) . '</br>';
-echo 'invoiceid :' . urldecode($_POST["invoiceid"]) . '</br>';
-echo 'description :' . urldecode($_POST["description"]) . '</br>';
-echo 'amount :' . urldecode($_POST["amount"]) . '</br>';
-echo 'currencyCode :' . urldecode($_POST["currencyCode"]) . '</br>';
-echo 'param1 :' . urldecode($_POST["param1"]) . '</br>';
-echo 'param2 :' . urldecode($_POST["param2"]) . '</br>';
-echo 'param3 :' . urldecode($_POST["param3"]) . '</br>';
-echo 'param4 :' . urldecode($_POST["param4"]) . '</br>';
-echo 'param5 :' . urldecode($_POST["param5"]) . '</br>';
-
 // Importacion de libreria necesaria para realizar los pagos Pagadito
 require_once __DIR__ . "/pagadito_api.php";
 
@@ -44,9 +29,7 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
     * Si se está realizando pruebas, necesita conectarse con Pagadito SandBox. Para ello llamamos
     * a la función mode_sandbox_on(). De lo contrario omitir la siguiente linea.
     */
-    if ($sandboxActive == "on") {
-        $Pagadito->mode_sandbox_on();
-    }
+    if ($sandboxActive == "on") $Pagadito->mode_sandbox_on();
 
     /*
      * Validamos la conexión llamando a la función connect(). Retorna
@@ -66,9 +49,9 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
         if ($param5 !== "noenviar") $Pagadito->set_custom_param("param5", $param5);
         
         //Habilita la recepción de pagos preautorizados para la orden de cobro.
-        if ($pagosPreautorizados == "on") {
-            $Pagadito->enable_pending_payments();
-        }
+        if ($pagosPreautorizados == "on") $Pagadito->enable_pending_payments();
+        
+        if($currencyCode == "CRC") $Pagadito->change_currency_crc();
 
         /*
          * Lo siguiente es ejecutar la transacción, enviandole el ern
@@ -79,7 +62,6 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
              * Debido a que la API nos puede devolver diversos mensajes de
              * respuesta, validamos el tipo de mensaje que nos devuelve.
              */
-
             echo "<SCRIPT> alert(\"" . $Pagadito->get_rs_code() . ": " . $Pagadito->get_rs_message() . "\"); location.href = 'index.php'; </SCRIPT> ";
         }
     } else {
