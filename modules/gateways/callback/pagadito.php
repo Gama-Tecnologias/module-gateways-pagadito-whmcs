@@ -94,23 +94,20 @@ if (isset($_GET["token"]) && $_GET["token"] != "") {
                 checkCbTransID($transactionId);
                 addInvoicePayment($invoiceId, $transactionId, $Pagadito->get_total_amount(), $Pagadito->get_commision(), $gatewayModuleName);
             }
-            header('Location: /viewinvoice.php?id=' . $invoiceId . '&st=' . substr($status_transaccion, 0, 3));
-            break;
+            header('Location: /viewinvoice.php?id=' . $invoiceId);
         } else {
             /* En caso de fallar la petición, verificamos el error devuelto.
              * Debido a que la API nos puede devolver diversos mensajes de
              * respuesta, validamos el tipo de mensaje que nos devuelve.
              */
-            header('Location: /viewinvoice.php?id=' . $invoiceId . '&st=PET');
-            break;
+            header('Location: /viewinvoice.php?id=' . $invoiceId);
         }
     } else {
         /* En caso de fallar la conexión, verificamos el error devuelto.
          * Debido a que la API nos puede devolver diversos mensajes de
          * respuesta, validamos el tipo de mensaje que nos devuelve.
          */
-        header('Location: /viewinvoice.php?id=' . $invoiceId . '&st=CON');
-        break;
+        header('Location: /viewinvoice.php?id=' . $invoiceId);
     }
 } else {
     header('Location: /index.php');
