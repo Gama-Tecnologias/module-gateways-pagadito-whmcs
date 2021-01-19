@@ -194,6 +194,17 @@ function pagadito_config()
     );
 }
 
+function paramOpcional($name, $params)
+{
+    if (in_array($params[$name], array("invoiceid", "description", "amount"))) {
+        return $params[$params[$name]];
+    } elseif (in_array($params[$name], array("firstname", "lastname", "email", "address1", "address2", "city", "state", "postcode", "country"))) {
+        return $params['clientdetails'][$params[$name]];
+    } else {
+        return "noenviar";
+    }
+}
+
 function pagadito_link($params)
 {
     // Gateway Configuration Parameters
@@ -216,41 +227,11 @@ function pagadito_link($params)
     $urlImagen = $params['urlImagen'];
 
     //Parametros opcionales
-    $param1 = "noenviar";
-    switch ($params['param1']) {
-        case "invoiceid" or "description" or "amount":
-            $param1 = $params['param1'];
-        case "firstname" or "lastname" or "email" or "address1" or "address2" or "city" or "state" or "postcode" or "country":
-            $param1 = $params['clientdetails'][$params['param1']];
-    }
-    $param2 = "noenviar";
-    switch ($params['param2']) {
-        case "invoiceid" or "description" or "amount":
-            $param2 = $params[$params['param2']];
-        case "firstname" or "lastname" or "email" or "address1" or "address2" or "city" or "state" or "postcode" or "country":
-            $param2 = $params['clientdetails'][$params['param2']];
-    }
-    $param3 = "noenviar";
-    switch ($params['param3']) {
-        case "invoiceid" or "description" or "amount":
-            $param3 = $params[$params['param3']];
-        case "firstname" or "lastname" or "email" or "address1" or "address2" or "city" or "state" or "postcode" or "country":
-            $param3 = $params['clientdetails'][$params['param3']];
-    }
-    $param4 = "noenviar";
-    switch ($params['param4']) {
-        case "invoiceid" or "description" or "amount":
-            $param4 = $params[$params['param4']];
-        case "firstname" or "lastname" or "email" or "address1" or "address2" or "city" or "state" or "postcode" or "country":
-            $param4 = $params['clientdetails'][$params['param4']];
-    }
-    $param5 = "noenviar";
-    switch ($params['param5']) {
-        case "invoiceid" or "description" or "amount":
-            $param5 = $params[$params['param5']];
-        case "firstname" or "lastname" or "email" or "address1" or "address2" or "city" or "state" or "postcode" or "country":
-            $param5 = $params['clientdetails'][$params['param5']];
-    }
+    $param1 = paramOpcional('param1', $params);
+    $param2 = paramOpcional('param2', $params);
+    $param3 = paramOpcional('param3', $params);
+    $param4 = paramOpcional('param4', $params);
+    $param5 = paramOpcional('param5', $params);
 
     // Build button
     $returnStr = '<style>' . file_get_contents(__DIR__ . '/pagadito/css.css') . '</style>';
