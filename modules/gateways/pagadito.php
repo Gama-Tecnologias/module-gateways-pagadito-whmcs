@@ -81,7 +81,7 @@ function pagadito_config()
             'Type' => 'text',
             'Size' => '100',
             'Default' => '',
-            'Description' => 'Imagen tarjetas par ala factura, 200px por 30px maximo',
+            'Description' => 'Imagen tarjetas para la factura, 200px por 30px maximo',
         ),
         'param1' => array(
             'FriendlyName' => 'Parametro #1',
