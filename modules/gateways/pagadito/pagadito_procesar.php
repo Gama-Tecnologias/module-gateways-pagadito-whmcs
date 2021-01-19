@@ -49,11 +49,11 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK) ) {
         $Pagadito->add_detail(1, $description, $amount, $returnUrl);
 
         //Agregando campos personalizados de la transacción
-        $Pagadito->set_custom_param("param1", "Valor de param1");
+      /*  $Pagadito->set_custom_param("param1", "Valor de param1");
         $Pagadito->set_custom_param("param2", "Valor de param2");
         $Pagadito->set_custom_param("param3", "Valor de param3");
         $Pagadito->set_custom_param("param4", "Valor de param4");
-        $Pagadito->set_custom_param("param5", "Valor de param5");
+        $Pagadito->set_custom_param("param5", "Valor de param5");*/
 
         //Habilita la recepción de pagos preautorizados para la orden de cobro.
         if ($pagosPreautorizados == "on") {
