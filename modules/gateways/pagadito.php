@@ -81,14 +81,14 @@ function pagadito_config()
             'Description' => 'Ingreso su WSK proporcionado por Pagadito',
         ),
         'sandbox_active' => array(
-            'FriendlyName' => 'Test Mode / Pruebas',
+            'FriendlyName' => 'Test Mode or SandBox / Modo Pruebas',
             'Type' => 'yesno',
-            'Description' => 'Tick to enable test mode/Activar modo Pruebas',
+            'Description' => 'Tick to enable test mode or SandBox / Activar modo Pruebas',
         ),
         'pagos_preautorizados' => array(
             'FriendlyName' => 'Pagos Preautorizados',
             'Type' => 'yesno',
-            'Description' => 'Habilita la recepción de pagos preautorizados para la orden de cobro.',
+            'Description' => 'Habilita la recepción de pagos preautorizados para la orden de cobro',
         ),
         'urlImagen' => array(
             'FriendlyName' => 'URL imagen tarjetas',

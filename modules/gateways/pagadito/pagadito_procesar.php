@@ -1,6 +1,9 @@
 <?php
-// Importacion de libreria necesaria para realizar los pagos Pagadito
+// Importacion de libreria necesarias
 require_once __DIR__ . "/pagadito_api.php";
+require_once __DIR__ . '/../../../init.php';
+App::load_function('gateway');
+App::load_function('invoice');
 
 //Variables enviadas por el proceso de pago
 $returnUrl = urldecode($_POST["returnUrl"]);
@@ -39,7 +42,9 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
         /*
          * Luego pasamos a agregar los detalles
          */
-        $Pagadito->add_detail(1, $description, $amount, $returnUrl);
+        foreach (localAPI('GetInvoice', array('invoiceid' => $invoiceid,), 'admin')->items() as $item) {
+            $Pagadito->add_detail($item['relid'], $item['description'], $item['amount'], $returnUrl);
+        }
 
         //Agregando campos personalizados de la transacción
         if ($param1 !== "noenviar") $Pagadito->set_custom_param("param1", $param1);
@@ -47,11 +52,11 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
         if ($param3 !== "noenviar") $Pagadito->set_custom_param("param3", $param3);
         if ($param4 !== "noenviar") $Pagadito->set_custom_param("param4", $param4);
         if ($param5 !== "noenviar") $Pagadito->set_custom_param("param5", $param5);
-        
+
         //Habilita la recepción de pagos preautorizados para la orden de cobro.
         if ($pagosPreautorizados == "on") $Pagadito->enable_pending_payments();
-        
-        if($currencyCode == "CRC") $Pagadito->change_currency_crc();
+
+        if ($currencyCode == "CRC") $Pagadito->change_currency_crc();
 
         /*
          * Lo siguiente es ejecutar la transacción, enviandole el ern
@@ -62,7 +67,7 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
              * Debido a que la API nos puede devolver diversos mensajes de
              * respuesta, validamos el tipo de mensaje que nos devuelve.
              */
-            echo "<SCRIPT> alert(\"" . $Pagadito->get_rs_code() . ": " . $Pagadito->get_rs_message() . "\"); location.href = 'index.php'; </SCRIPT> ";
+            header('Location: /viewinvoice.php?id=' . $invoiceId);
         }
     } else {
         /*
@@ -70,8 +75,8 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
          * Debido a que la API nos puede devolver diversos mensajes de
          * respuesta, validamos el tipo de mensaje que nos devuelve.
          */
-        echo "<SCRIPT> alert(\"" . $Pagadito->get_rs_code() . ": " . $Pagadito->get_rs_message() . "\"); location.href = 'index.php'; </SCRIPT> ";
+        header('Location: /viewinvoice.php?id=' . $invoiceId);
     }
 } else {
-    header('Location: /index.php');    
+    header('Location: /index.php');
 }

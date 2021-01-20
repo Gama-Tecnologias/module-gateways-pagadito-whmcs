@@ -25,8 +25,8 @@ $gatewayModuleName = basename(__FILE__, '.php');
 // Fetch gateway configuration parameters.
 $gatewayParams = getGatewayVariables($gatewayModuleName);
 //Obtener parametros para el modulo
-$pagaditoUID = $gatewayParams["pagadito_UID"];
-$pagaditoWSK = $gatewayParams["pagadito_WSK"];
+$pagaditoUID = ($params['sandbox_active'] == "on" ?  $params['sandbox_pagadito_UID'] : $params['pagadito_UID']);
+$pagaditoWSK = ($params['sandbox_active'] == "on" ?  $params['sandbox_pagadito_WSK'] : $params['pagadito_WSK']);
 $sandboxActive = $gatewayParams['sandbox_active'];
 $pagadito_token = $_GET["token"];
 $invoiceId = $_GET["fac"];
