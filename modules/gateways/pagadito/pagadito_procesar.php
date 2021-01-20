@@ -27,13 +27,11 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
     * parámetro la URL de Conexión definida en la constante WSPG
     */
     $Pagadito = new Pagadito($pagaditoUID, $pagaditoWSK);
-
     /*
     * Si se está realizando pruebas, necesita conectarse con Pagadito SandBox. Para ello llamamos
     * a la función mode_sandbox_on(). De lo contrario omitir la siguiente linea.
     */
     if ($sandboxActive == "on") $Pagadito->mode_sandbox_on();
-
     /*
      * Validamos la conexión llamando a la función connect(). Retorna
      * true si la conexión es exitosa. De lo contrario retorna false
@@ -42,9 +40,11 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
         /*
          * Luego pasamos a agregar los detalles
          */
-        foreach(localAPI('GetInvoice', array('invoiceid' => $invoiceid), '')['items']['item'] as $item){
-            $Pagadito->add_detail($item['relid'], $item['description'], $item['amount'], $returnUrl);
+        $invoice = localAPI('GetInvoice', array('invoiceid' => $invoiceid), '');
+        foreach ($invoice['items']['item'] as $item) {
+            $Pagadito->add_detail(1, $item['description']." ". ($item['taxed']=1?" + IVA":""), $item['amount'], $returnUrl);
         }
+        if ($invoice['tax'] > 0) $Pagadito->add_detail(1, 'IVA', $invoice['tax'], $returnUrl);
 
         //Agregando campos personalizados de la transacción
         if ($param1 !== "noenviar") $Pagadito->set_custom_param("param1", $param1);
@@ -67,13 +67,7 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
              * Debido a que la API nos puede devolver diversos mensajes de
              * respuesta, validamos el tipo de mensaje que nos devuelve.
              */
-            echo "
-            <SCRIPT>
-                alert(\"".$Pagadito->get_rs_code().": ".$Pagadito->get_rs_message()."\");
-                location.href = 'index.php';
-            </SCRIPT>
-        ";
-           // header('Location: /viewinvoice.php?id=' . $invoiceId);
+            echo "<SCRIPT>alert(\"".$Pagadito->get_rs_code().": ".$Pagadito->get_rs_message()."\");location.href = \"/clientarea.php?action=invoices\";</SCRIPT>";
         }
     } else {
         /*
@@ -81,13 +75,7 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
          * Debido a que la API nos puede devolver diversos mensajes de
          * respuesta, validamos el tipo de mensaje que nos devuelve.
          */
-        echo "
-        <SCRIPT>
-            alert(\"".$Pagadito->get_rs_code().": ".$Pagadito->get_rs_message()."\");
-            location.href = 'index.php';
-        </SCRIPT>
-    ";
-      //  header('Location: /viewinvoice.php?id=' . $invoiceId);
+        echo "<SCRIPT>alert(\"".$Pagadito->get_rs_code().": ".$Pagadito->get_rs_message()."\");location.href = \"/clientarea.php?action=invoices\";</SCRIPT>";
     }
 } else {
     header('Location: /index.php');

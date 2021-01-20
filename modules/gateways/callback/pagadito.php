@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Esto es parte del modulo para procesar pagos con el API de la empresa Pagadito.
  *
@@ -15,7 +14,7 @@
  */
 
 // Importacion de libreria necesarias
-require_once __DIR__ . "/pagadito_api.php";
+require_once __DIR__ . "/../pagadito/pagadito_api.php";
 require_once __DIR__ . '/../../../init.php';
 App::load_function('gateway');
 App::load_function('invoice');
@@ -30,6 +29,12 @@ $pagaditoWSK = ($params['sandbox_active'] == "on" ?  $params['sandbox_pagadito_W
 $sandboxActive = $gatewayParams['sandbox_active'];
 $pagadito_token = $_GET["token"];
 $invoiceId = $_GET["fac"];
+
+echo $pagaditoUID.'</br>';
+echo $pagaditoWSK.'</br>';
+echo $sandboxActive.'</br>';
+echo $pagadito_token.'</br>';
+echo $invoiceId.'</br>';
 
 // Die if module is not active.
 if (!$gatewayParams['type']) {
