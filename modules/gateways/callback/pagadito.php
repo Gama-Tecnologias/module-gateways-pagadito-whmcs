@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Esto es parte del modulo para procesar pagos con el API de la empresa Pagadito.
  *
@@ -24,17 +25,11 @@ $gatewayModuleName = basename(__FILE__, '.php');
 // Fetch gateway configuration parameters.
 $gatewayParams = getGatewayVariables($gatewayModuleName);
 //Obtener parametros para el modulo
-$pagaditoUID = ($params['sandbox_active'] == "on" ?  $params['sandbox_pagadito_UID'] : $params['pagadito_UID']);
-$pagaditoWSK = ($params['sandbox_active'] == "on" ?  $params['sandbox_pagadito_WSK'] : $params['pagadito_WSK']);
+$pagaditoUID = ($gatewayParams['sandbox_active'] == "on" ?  $gatewayParams['sandbox_pagadito_UID'] : $gatewayParams['pagadito_UID']);
+$pagaditoWSK = ($gatewayParams['sandbox_active'] == "on" ?  $gatewayParams['sandbox_pagadito_WSK'] : $gatewayParams['pagadito_WSK']);
 $sandboxActive = $gatewayParams['sandbox_active'];
 $pagadito_token = $_GET["token"];
 $invoiceId = $_GET["fac"];
-
-echo $pagaditoUID.'</br>';
-echo $pagaditoWSK.'</br>';
-echo $sandboxActive.'</br>';
-echo $pagadito_token.'</br>';
-echo $invoiceId.'</br>';
 
 // Die if module is not active.
 if (!$gatewayParams['type']) {
@@ -82,35 +77,42 @@ if (isset($_GET["token"]) && $_GET["token"] != "") {
              */
             $status_transaccion = $Pagadito->get_rs_status();
             logTransaction($gatewayModuleName, $_POST, $status_transaccion);
-
-            if ($status_transaccion == "COMPLETED") { //Tratamiento para una transacción exitosa.  
-                $transactionId = $Pagadito->get_rs_reference();
-                /**
-                 * Check Callback Transaction ID.
-                 *
-                 * Performs a check for any existing transactions with the same given
-                 * transaction number.
-                 *
-                 * Performs a die upon encountering a duplicate.
-                 * @param string $transactionId
-                 */
-                checkCbTransID($transactionId);
-                addInvoicePayment($invoiceId, $transactionId, $Pagadito->get_total_amount(), $Pagadito->get_commision(), $gatewayModuleName);
+            switch ($status_transaccion) {
+                case "COMPLETED":
+                    $transactionId = $Pagadito->get_rs_reference();
+                    checkCbTransID($transactionId);
+                    addInvoicePayment($invoiceId, $transactionId, $Pagadito->get_total_amount(), $Pagadito->get_commision(), $gatewayModuleName);
+                    header('Location: /viewinvoice.php?id=' . $invoiceId . '&paymentsuccess=true');
+                    break;
+                case "REGISTERED":
+                    header('Location: /viewinvoice.php?id=' . $invoiceId . '&paymentinititated=true');
+                    break;
+                case "VERIFYING":
+                    header('Location: /viewinvoice.php?id=' . $invoiceId . '&pendingreview=true');
+                    break;
+                case "REVOKED":
+                    header('Location: /viewinvoice.php?id=' . $invoiceId . '&paymentfailed=true');
+                    break;
+                case "FAILED":
+                    header('Location: /viewinvoice.php?id=' . $invoiceId . '&paymentfailed=true');
+                    break;
+                default:
+                    header('Location: /viewinvoice.php?id=' . $invoiceId . '&paymentfailed=true');
+                    break;
             }
-            header('Location: /viewinvoice.php?id=' . $invoiceId);
         } else {
             /* En caso de fallar la petición, verificamos el error devuelto.
              * Debido a que la API nos puede devolver diversos mensajes de
              * respuesta, validamos el tipo de mensaje que nos devuelve.
              */
-            header('Location: /viewinvoice.php?id=' . $invoiceId);
+            header('Location: /viewinvoice.php?id=' . $invoiceId . '&paymentfailed=true');
         }
     } else {
         /* En caso de fallar la conexión, verificamos el error devuelto.
          * Debido a que la API nos puede devolver diversos mensajes de
          * respuesta, validamos el tipo de mensaje que nos devuelve.
          */
-        header('Location: /viewinvoice.php?id=' . $invoiceId);
+        header('Location: /viewinvoice.php?id=' . $invoiceId . '&paymentfailed=true');
     }
 } else {
     header('Location: /index.php');
