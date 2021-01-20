@@ -1,6 +1,6 @@
 <?php
 
-/** 7.7 minimo
+/**
  * Esto es parte del modulo para procesar pagos con el API de la empresa Pagadito.
  *
  * LICENCIA: Éste código fuente es de uso libre. Su comercialización no está
@@ -50,7 +50,7 @@ function pagadito_config()
     return array(
         'FriendlyName' => array(
             'Type' => 'System',
-            'Value' => 'Pagadito Gateway Module by gamatecnologias.com',
+            'Value' => 'Pagadito Gateway Module',
         ),
         'pagadito_UID' => array(
             'FriendlyName' => 'Pagadito UID',
@@ -61,6 +61,20 @@ function pagadito_config()
         ),
         'pagadito_WSK' => array(
             'FriendlyName' => 'Pagadito WSK',
+            'Type' => 'password',
+            'Size' => '50',
+            'Default' => '',
+            'Description' => 'Ingreso su WSK proporcionado por Pagadito',
+        ),
+        'sandbox_pagadito_UID' => array(
+            'FriendlyName' => 'Pagadito UID SandBox',
+            'Type' => 'password',
+            'Size' => '50',
+            'Default' => '',
+            'Description' => 'Ingreso su UID proporcionado por Pagadito',
+        ),
+        'sandbox_pagadito_WSK' => array(
+            'FriendlyName' => 'Pagadito WSK SandBox',
             'Type' => 'password',
             'Size' => '50',
             'Default' => '',
@@ -89,15 +103,14 @@ function pagadito_config()
             'Options' => array(
                 'noenviar' => 'No enviar',
                 'invoiceid' => 'Numero Factura',
-                'description' => 'Descripcion',
+                'description' => 'Descripcion Pago',
                 'amount' => 'Monto total',
-                'firstname' => 'Nombre',
-                'lastname' => 'Apellidos',
-                'email' => 'Correo electronico',
+                'fullname' => 'Cliente',
+                'email' => 'Correo Electronico',
                 'address1' => 'Direción 1',
                 'address2' => 'Dirección 2',
                 'city' => 'Ciudad',
-                'state' => 'Estado',
+                'state' => 'Estado/Provincia',
                 'postcode' => 'Codigo Postal',
                 'country' => 'Pais',
             ),
@@ -110,15 +123,14 @@ function pagadito_config()
             'Options' => array(
                 'noenviar' => 'No enviar',
                 'invoiceid' => 'Numero Factura',
-                'description' => 'Descripcion',
+                'description' => 'Descripcion Pago',
                 'amount' => 'Monto total',
-                'firstname' => 'Nombre',
-                'lastname' => 'Apellidos',
-                'email' => 'Correo electronico',
+                'fullname' => 'Cliente',
+                'email' => 'Correo Electronico',
                 'address1' => 'Direción 1',
                 'address2' => 'Dirección 2',
                 'city' => 'Ciudad',
-                'state' => 'Estado',
+                'state' => 'Estado/Provincia',
                 'postcode' => 'Codigo Postal',
                 'country' => 'Pais',
             ),
@@ -131,15 +143,14 @@ function pagadito_config()
             'Options' => array(
                 'noenviar' => 'No enviar',
                 'invoiceid' => 'Numero Factura',
-                'description' => 'Descripcion',
+                'description' => 'Descripcion Pago',
                 'amount' => 'Monto total',
-                'firstname' => 'Nombre',
-                'lastname' => 'Apellidos',
-                'email' => 'Correo electronico',
+                'fullname' => 'Cliente',
+                'email' => 'Correo Electronico',
                 'address1' => 'Direción 1',
                 'address2' => 'Dirección 2',
                 'city' => 'Ciudad',
-                'state' => 'Estado',
+                'state' => 'Estado/Provincia',
                 'postcode' => 'Codigo Postal',
                 'country' => 'Pais',
             ),
@@ -152,15 +163,14 @@ function pagadito_config()
             'Options' => array(
                 'noenviar' => 'No enviar',
                 'invoiceid' => 'Numero Factura',
-                'description' => 'Descripcion',
+                'description' => 'Descripcion Pago',
                 'amount' => 'Monto total',
-                'firstname' => 'Nombre',
-                'lastname' => 'Apellidos',
-                'email' => 'Correo electronico',
+                'fullname' => 'Cliente',
+                'email' => 'Correo Electronico',
                 'address1' => 'Direción 1',
                 'address2' => 'Dirección 2',
                 'city' => 'Ciudad',
-                'state' => 'Estado',
+                'state' => 'Estado/Provincia',
                 'postcode' => 'Codigo Postal',
                 'country' => 'Pais',
             ),
@@ -173,15 +183,14 @@ function pagadito_config()
             'Options' => array(
                 'noenviar' => 'No enviar',
                 'invoiceid' => 'Numero Factura',
-                'description' => 'Descripcion',
+                'description' => 'Descripcion Pago',
                 'amount' => 'Monto total',
-                'firstname' => 'Nombre',
-                'lastname' => 'Apellidos',
-                'email' => 'Correo electronico',
+                'fullname' => 'Cliente',
+                'email' => 'Correo Electronico',
                 'address1' => 'Direción 1',
                 'address2' => 'Dirección 2',
                 'city' => 'Ciudad',
-                'state' => 'Estado',
+                'state' => 'Estado/Provincia',
                 'postcode' => 'Codigo Postal',
                 'country' => 'Pais',
             ),
@@ -195,8 +204,10 @@ function paramOpcional($name, $params)
 {
     if (in_array($params[$name], array("invoiceid", "description", "amount"))) {
         return $params[$params[$name]];
-    } elseif (in_array($params[$name], array("firstname", "lastname", "email", "address1", "address2", "city", "state", "postcode", "country"))) {
+    } elseif (in_array($params[$name], array("email", "address1", "address2", "city", "state", "postcode", "country"))) {
         return $params['clientdetails'][$params[$name]];
+    } elseif ($params[$name] == "fullname") {
+        return $params["firstname"] . " " . $params["lastname"];
     } else {
         return "noenviar";
     }
@@ -205,8 +216,8 @@ function paramOpcional($name, $params)
 function pagadito_link($params)
 {
     // Gateway Configuration Parameters
-    $pagaditoUID = $params['pagadito_UID'];
-    $pagaditoWSK = $params['pagadito_WSK'];
+    $pagaditoUID = ($params['sandbox_active'] == "on" ?  $params['sandbox_pagadito_UID'] : $params['pagadito_UID']);
+    $pagaditoWSK = ($params['sandbox_active'] == "on" ?  $params['sandbox_pagadito_WSK'] : $params['pagadito_WSK']);
     $sandboxActive = $params['sandbox_active'];
     $pagosPreautorizados = $params['pagos_preautorizados'];
 

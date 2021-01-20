@@ -15,12 +15,10 @@
  */
 
 // Importacion de libreria necesarias
-require_once __DIR__ . "/../pagadito/pagadito_api.php";
+require_once __DIR__ . "/pagadito_api.php";
 require_once __DIR__ . '/../../../init.php';
 App::load_function('gateway');
 App::load_function('invoice');
-
-use WHMCS\Database\Capsule;
 
 // Detect module name from filename.
 $gatewayModuleName = basename(__FILE__, '.php');
