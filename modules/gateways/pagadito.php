@@ -207,7 +207,7 @@ function paramOpcional($name, $params)
     } elseif (in_array($params[$name], array("email", "address1", "address2", "city", "state", "postcode", "country"))) {
         return $params['clientdetails'][$params[$name]];
     } elseif ($params[$name] == "fullname") {
-        return $params["firstname"] . " " . $params["lastname"];
+        return $params['clientdetails']["firstname"] . " " . $params['clientdetails']["lastname"];
     } else {
         return "noenviar";
     }

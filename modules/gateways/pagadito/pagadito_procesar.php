@@ -42,7 +42,7 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
         /*
          * Luego pasamos a agregar los detalles
          */
-        foreach (localAPI('GetInvoice', array('invoiceid' => $invoiceid,), 'admin')->items() as $item) {
+        foreach(localAPI('GetInvoice', array('invoiceid' => $invoiceid), '')['items']['item'] as $item){
             $Pagadito->add_detail($item['relid'], $item['description'], $item['amount'], $returnUrl);
         }
 
@@ -67,7 +67,13 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
              * Debido a que la API nos puede devolver diversos mensajes de
              * respuesta, validamos el tipo de mensaje que nos devuelve.
              */
-            header('Location: /viewinvoice.php?id=' . $invoiceId);
+            echo "
+            <SCRIPT>
+                alert(\"".$Pagadito->get_rs_code().": ".$Pagadito->get_rs_message()."\");
+                location.href = 'index.php';
+            </SCRIPT>
+        ";
+           // header('Location: /viewinvoice.php?id=' . $invoiceId);
         }
     } else {
         /*
@@ -75,7 +81,13 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
          * Debido a que la API nos puede devolver diversos mensajes de
          * respuesta, validamos el tipo de mensaje que nos devuelve.
          */
-        header('Location: /viewinvoice.php?id=' . $invoiceId);
+        echo "
+        <SCRIPT>
+            alert(\"".$Pagadito->get_rs_code().": ".$Pagadito->get_rs_message()."\");
+            location.href = 'index.php';
+        </SCRIPT>
+    ";
+      //  header('Location: /viewinvoice.php?id=' . $invoiceId);
     }
 } else {
     header('Location: /index.php');
