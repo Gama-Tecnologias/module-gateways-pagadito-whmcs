@@ -42,7 +42,7 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
          */
         $invoice = localAPI('GetInvoice', array('invoiceid' => $invoiceid), '');
         foreach ($invoice['items']['item'] as $item) {
-            $Pagadito->add_detail(1, $item['description']." ". ($item['taxed']=1?" + IVA":""), $item['amount'], $returnUrl);
+            $Pagadito->add_detail(1, $item['description']." ". ($item['taxed']=="1"?" + IVA":""), $item['amount'], $returnUrl);
         }
         if ($invoice['tax'] > 0) $Pagadito->add_detail(1, 'IVA', $invoice['tax'], $returnUrl);
 
