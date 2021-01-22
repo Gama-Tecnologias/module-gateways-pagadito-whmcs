@@ -1,11 +1,24 @@
 <?php
-// Importacion de libreria necesarias
+/**
+ * Esto es parte del modulo para procesar pagos con el API de la empresa Pagadito.
+ *
+ * LICENCIA: Éste código fuente es de uso libre. Su comercialización no está
+ * permitida. Toda publicación o mención del mismo, debe ser referenciada a
+ * su autor original Gamatecnologias.com
+ *
+ * @author      Gamatecnologias.com <soporte@gamatecnologias.com>
+ * @copyright   Copyright (c) 2021, gamatecnologias.com
+ * @version     PHP 1.0.0
+ * @link        https://www.gamatecnologias.com/
+ */
+
+// Importacion de libreria necesarias tando de pagadito como de WHMCS
 require_once __DIR__ . "/pagadito_api.php";
 require_once __DIR__ . '/../../../init.php';
 App::load_function('gateway');
 App::load_function('invoice');
 
-//Variables enviadas por el proceso de pago
+// Captura de variables enviadas por el proceso de pago Pagadito
 $returnUrl = urldecode($_POST["returnUrl"]);
 $pagaditoUID = urldecode($_POST["pagaditoUID"]);
 $pagaditoWSK = urldecode($_POST["pagaditoWSK"]);
@@ -21,62 +34,51 @@ $param3 = urldecode($_POST["param3"]);
 $param4 = urldecode($_POST["param4"]);
 $param5 = urldecode($_POST["param5"]);
 
+// Validacion si monto es positivo y si existen las variables para llamar el API Pagadito
 if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
-    /*
-    * Lo primero es crear el objeto nusoap_client, al que se le pasa como
-    * parámetro la URL de Conexión definida en la constante WSPG
-    */
+
+    // Se crea el objeto Pagadito nusoap_client, al que se le pasan los parametros de UID y WSK   
     $Pagadito = new Pagadito($pagaditoUID, $pagaditoWSK);
-    /*
-    * Si se está realizando pruebas, necesita conectarse con Pagadito SandBox. Para ello llamamos
-    * a la función mode_sandbox_on(). De lo contrario omitir la siguiente linea.
-    */
+
+    // Se llama la funcion mode_sandbox_on en caso que el parametro de SandBox este en ON    
     if ($sandboxActive == "on") $Pagadito->mode_sandbox_on();
-    /*
-     * Validamos la conexión llamando a la función connect(). Retorna
-     * true si la conexión es exitosa. De lo contrario retorna false
-     */
+
+    // Validamos la conexión llamando a la función connect()
     if ($Pagadito->connect()) {
-        /*
-         * Luego pasamos a agregar los detalles
-         */
+
+        // Se leen los detalles de la factura para enviar a Pagadito
         $invoice = localAPI('GetInvoice', array('invoiceid' => $invoiceid), '');
         foreach ($invoice['items']['item'] as $item) {
-            $Pagadito->add_detail(1, $item['description']." ". ($item['taxed']=="1"?" + IVA":""), $item['amount'], $returnUrl);
+            $Pagadito->add_detail(1, $item['description'] . " " . ($item['taxed'] == "1" ? " + IVA" : ""), $item['amount'], $returnUrl);
         }
+        //Se optiene el monto de impuestos y se envia a Pagadito como una linea adicional
         if ($invoice['tax'] > 0) $Pagadito->add_detail(1, 'IVA', $invoice['tax'], $returnUrl);
 
-        //Agregando campos personalizados de la transacción
+        //Agregando campos personalizados de la transacción en caso que se enviaran
         if ($param1 !== "noenviar") $Pagadito->set_custom_param("param1", $param1);
         if ($param2 !== "noenviar") $Pagadito->set_custom_param("param2", $param2);
         if ($param3 !== "noenviar") $Pagadito->set_custom_param("param3", $param3);
         if ($param4 !== "noenviar") $Pagadito->set_custom_param("param4", $param4);
         if ($param5 !== "noenviar") $Pagadito->set_custom_param("param5", $param5);
 
-        //Habilita la recepción de pagos preautorizados para la orden de cobro.
+        // Habilita la recepción de pagos preautorizados para la orden de cobro en caso que el parametro de SandBox este en ON
         if ($pagosPreautorizados == "on") $Pagadito->enable_pending_payments();
 
-        if ($currencyCode == "CRC") $Pagadito->change_currency_crc();
+        // Asigana la moneda correcta a la transaccion, en caso que la moneda no este en las permitidas mostrar un error.
+        if (!$Pagadito->change_currency($currencyCode)) {
+            echo "<SCRIPT>alert('Moneda no aceptada, consutla con el administrador.');location.href = \"/clientarea.php?action=invoices\";</SCRIPT>";
+        }
 
-        /*
-         * Lo siguiente es ejecutar la transacción, enviandole el ern
-         */
+        // Se ejecuta la transaccion y se envia el Id de la factura WHMCS
         if (!$Pagadito->exec_trans($invoiceid)) {
-            /*
-             * En caso de fallar la transacción, verificamos el error devuelto.
-             * Debido a que la API nos puede devolver diversos mensajes de
-             * respuesta, validamos el tipo de mensaje que nos devuelve.
-             */
-            echo "<SCRIPT>alert(\"".$Pagadito->get_rs_code().": ".$Pagadito->get_rs_message()."\");location.href = \"/clientarea.php?action=invoices\";</SCRIPT>";
+            // En caso que falle se mostrara un error con la descripcon
+            echo "<SCRIPT>alert(\"" . $Pagadito->get_rs_code() . ": " . $Pagadito->get_rs_message() . "\");location.href = \"/clientarea.php?action=invoices\";</SCRIPT>";
         }
     } else {
-        /*
-         * En caso de fallar la conexión, verificamos el error devuelto.
-         * Debido a que la API nos puede devolver diversos mensajes de
-         * respuesta, validamos el tipo de mensaje que nos devuelve.
-         */
-        echo "<SCRIPT>alert(\"".$Pagadito->get_rs_code().": ".$Pagadito->get_rs_message()."\");location.href = \"/clientarea.php?action=invoices\";</SCRIPT>";
+        // En caso de fallar la conexión, verificamos el error devuelto.         
+        echo "<SCRIPT>alert(\"" . $Pagadito->get_rs_code() . ": " . $Pagadito->get_rs_message() . "\");location.href = \"/clientarea.php?action=invoices\";</SCRIPT>";
     }
 } else {
+    // Si no pasa las primeras validacion envia al index
     header('Location: /index.php');
 }

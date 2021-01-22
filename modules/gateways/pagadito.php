@@ -18,14 +18,7 @@ if (!defined("WHMCS")) {
 }
 
 /**
- * Define module related meta data.
- *
- * Values returned here are used to determine module related capabilities and
- * settings.
- *
- * @see https://developers.whmcs.com/payment-gateways/meta-data-params/
- *
- * @return array
+ * Metadata relacionada al modulo.
  */
 function pagadito_MetaData()
 {
@@ -36,14 +29,7 @@ function pagadito_MetaData()
 }
 
 /**
- * Define gateway configuration options.
- *
- * Examples of each field type and their possible configuration parameters are
- * provided in the sample function below.
- *
- * @see https://developers.whmcs.com/payment-gateways/configuration/
- *
- * @return array
+ * Configuración necesaria para el modulo administrador de pasarelas de pago.
  */
 function pagadito_config()
 {
@@ -197,9 +183,18 @@ function pagadito_config()
             'Default' => 'noenviar',
             'Description' => 'Parametro #5 que se va a enviar a Pagadito',
         ),
+        "urlretorno" => array(
+            "FriendlyName"  => "URL Retorno",
+            "Type"          => "textarea",
+            "Descripcion"   => "Copie esta dirección y agréguela en el administrador de pagadito como URL de retorno",
+            "Default"       => $CONFIG['SystemURL']."/modules/gateways/callback/pagadito.php?token={value}&fac={ern_value}"
+        ),
     );
 }
 
+/**
+ * Funcion para generar parametros opcionales segun configuración
+ */
 function paramOpcional($name, $params)
 {
     if (in_array($params[$name], array("invoiceid", "description", "amount"))) {
@@ -213,35 +208,36 @@ function paramOpcional($name, $params)
     }
 }
 
+/**
+ * Genaracion de boton de pago con las configuraciondes de pagadito
+ */
 function pagadito_link($params)
 {
-    // Gateway Configuration Parameters
+    // Parametros generales de sistema
     $pagaditoUID = ($params['sandbox_active'] == "on" ?  $params['sandbox_pagadito_UID'] : $params['pagadito_UID']);
     $pagaditoWSK = ($params['sandbox_active'] == "on" ?  $params['sandbox_pagadito_WSK'] : $params['pagadito_WSK']);
     $sandboxActive = $params['sandbox_active'];
     $pagosPreautorizados = $params['pagos_preautorizados'];
-
-    // Invoice Parameters
-    $invoiceid = $params['invoiceid'];
-    $description = $params["description"];
-    $amount = $params['amount'];
-    $currencyCode = $params['currency'];
-
-    // System Parameters
     $systemUrl = $params['systemurl'];
     $returnUrl = $params['returnurl'];
     $langPayNow = $params['langpaynow'];
     $companyName = $params['companyname'];
     $urlImagen = $params['urlImagen'];
 
-    //Parametros opcionales
+    // Parametros de factura
+    $invoiceid = $params['invoiceid'];
+    $description = $params["description"];
+    $amount = $params['amount'];
+    $currencyCode = $params['currency'];
+
+    // Parametros opcionales
     $param1 = paramOpcional('param1', $params);
     $param2 = paramOpcional('param2', $params);
     $param3 = paramOpcional('param3', $params);
     $param4 = paramOpcional('param4', $params);
     $param5 = paramOpcional('param5', $params);
 
-    // Build button
+    // Contruccion de codigo para el boton de pago pagadito
     $returnStr = '<style>' . file_get_contents(__DIR__ . '/pagadito/css.css') . '</style>';
     $returnStr .= '<form class="form-pagadito" method="post" action="' . $systemUrl . 'modules/gateways/pagadito/pagadito_procesar.php">';
     $returnStr .= '<input type="hidden" name="returnUrl" value="' . urlencode($returnUrl) . '" />';
@@ -259,6 +255,7 @@ function pagadito_link($params)
     $returnStr .= '<input type="hidden" name="param4" value="' . urlencode($param4) . '" />';
     $returnStr .= '<input type="hidden" name="param5" value="' . urlencode($param5) . '" />';
     $returnStr .= '<input type="submit" value="' . $langPayNow . '" />';
+    // Se puede asiganar en configuracion una imagen diferente a la Default de Pagadito
     $returnStr .= '<img src="' . (empty($urlImagen) ? '.\modules\gateways\pagadito\tarjetas-min.png' : $urlImagen) . '" alt="' . $companyName . '"></form>';
 
     return $returnStr;

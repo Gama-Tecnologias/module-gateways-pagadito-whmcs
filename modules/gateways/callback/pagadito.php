@@ -14,73 +14,62 @@
  * https://www.gamatecnologias.com/modules/gateways/callback/pagadito.php?token={value}&fac={ern_value}
  */
 
-// Importacion de libreria necesarias
+// Importacion de libreria necesarias tando de pagadito como de WHMCS
 require_once __DIR__ . "/../pagadito/pagadito_api.php";
 require_once __DIR__ . '/../../../init.php';
 App::load_function('gateway');
 App::load_function('invoice');
 
-// Detect module name from filename.
-$gatewayModuleName = basename(__FILE__, '.php');
-// Fetch gateway configuration parameters.
+// Declaramos nombre del modulo para utilizar en otras funciones
+$gatewayModuleName = "pagadito";
+
+// Obtiene listado de variables ligadas al modulo WHMCS.
 $gatewayParams = getGatewayVariables($gatewayModuleName);
-//Obtener parametros para el modulo
+
+// Obtener parametros del el modulo necesarios para validar el pago con Pagadito
 $pagaditoUID = ($gatewayParams['sandbox_active'] == "on" ?  $gatewayParams['sandbox_pagadito_UID'] : $gatewayParams['pagadito_UID']);
 $pagaditoWSK = ($gatewayParams['sandbox_active'] == "on" ?  $gatewayParams['sandbox_pagadito_WSK'] : $gatewayParams['pagadito_WSK']);
 $sandboxActive = $gatewayParams['sandbox_active'];
 $pagadito_token = $_GET["token"];
 $invoiceId = $_GET["fac"];
 
-// Die if module is not active.
+// Die si el modulo no esta activo
 if (!$gatewayParams['type']) {
     die("Module Not Activated");
 }
 
+// Se valida que Pagadito nos envie el token
 if (isset($_GET["token"]) && $_GET["token"] != "") {
-    /**
-     * Validate Callback Invoice ID.
-     *
-     * Checks invoice ID is a valid invoice number. Note it will count an
-     * invoice in any status as valid.
-     *
-     * Performs a die upon encountering an invalid Invoice ID.
-     *
-     * Returns a normalised invoice ID.
-     *
-     * @param int $invoiceId
-     * @param string $gatewayName
-     */
+
+    // Validamos si el id de factura existe en el sistema, de lo contrario devolvera un die
     $invoiceId = checkCbInvoiceID($invoiceId, $gatewayModuleName);
-    /*
-     * Lo primero es crear el objeto Pagadito, al que se le pasa como
-     * parámetros el UID y el WSK definidos en config.php
-     */
+
+    // Se crea el objeto Pagadito nusoap_client, al que se le pasan los parametros de UID y WSK
     $Pagadito = new Pagadito($pagaditoUID, $pagaditoWSK);
-    /*
-     * Si se está realizando pruebas, necesita conectarse con Pagadito SandBox. Para ello llamamos
-     * a la función mode_sandbox_on(). De lo contrario omitir la siguiente linea.
-     */
-    if ($sandboxActive == "on") {
-        $Pagadito->mode_sandbox_on();
-    }
-    /* Validamos la conexión llamando a la función connect(). Retorna
-     * true si la conexión es exitosa. De lo contrario retorna false
-     */
+
+    // Se llama la funcion mode_sandbox_on en caso que el parametro de SandBox este en ON    
+    if ($sandboxActive == "on") $Pagadito->mode_sandbox_on();
+
+    // Validamos la conexión llamando a la función connect()
     if ($Pagadito->connect()) {
-        /* Solicitamos el estado de la transacción llamando a la función
-         * get_status(). Le pasamos como parámetro el token recibido vía
-         * GET en nuestra URL de retorno.
-         */
+
+        // Se ejecuta el llamado a consultar estado a Pagadito
         if ($Pagadito->get_status($_GET["token"])) {
-            /* Luego validamos el estado de la transacción, consultando el
-             * estado devuelto por la API.
-             */
+
+            // Almacenamos el estado de la transaccion devuelto por la API
             $status_transaccion = $Pagadito->get_rs_status();
+
+            // Se registra el log de la transaccion en el sistema de logs de WHMCS
             logTransaction($gatewayModuleName, $_POST, $status_transaccion);
+
+            // Segun el estado resultanta de la transaccion se ejecutan proceso o bien se retornan errores
             switch ($status_transaccion) {
                 case "COMPLETED":
+                    // Se obtiene la transaccion de pagadito
                     $transactionId = $Pagadito->get_rs_reference();
+                    // Se valida si la transaccion ya fue aplicada en sistema para no duplicar transacciones
                     checkCbTransID($transactionId);
+                    // Se agrega la transaccion al sistema WHMCS para marcar como paga la Factura
                     addInvoicePayment($invoiceId, $transactionId, $Pagadito->get_total_amount(), $Pagadito->get_commision(), $gatewayModuleName);
                     header('Location: /viewinvoice.php?id=' . $invoiceId . '&paymentsuccess=true');
                     break;
@@ -101,17 +90,11 @@ if (isset($_GET["token"]) && $_GET["token"] != "") {
                     break;
             }
         } else {
-            /* En caso de fallar la petición, verificamos el error devuelto.
-             * Debido a que la API nos puede devolver diversos mensajes de
-             * respuesta, validamos el tipo de mensaje que nos devuelve.
-             */
+            // En caso que falle se mostrara un error con la descripcon
             header('Location: /viewinvoice.php?id=' . $invoiceId . '&paymentfailed=true');
         }
     } else {
-        /* En caso de fallar la conexión, verificamos el error devuelto.
-         * Debido a que la API nos puede devolver diversos mensajes de
-         * respuesta, validamos el tipo de mensaje que nos devuelve.
-         */
+        // En caso de fallar la conexión, verificamos el error devuelto.  
         header('Location: /viewinvoice.php?id=' . $invoiceId . '&paymentfailed=true');
     }
 } else {

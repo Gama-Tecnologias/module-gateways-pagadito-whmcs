@@ -6,6 +6,8 @@
  * LICENCIA: Éste código fuente es de uso libre. Su comercialización no está
  * permitida. Toda publicación o mención del mismo, debe ser referenciada a
  * su autor original Pagadito.com.
+ * 
+ * Modificado por Gamatecnologias.com <soporte@gamatecnologias.com>
  *
  * @author      Pagadito.com <soporte@pagadito.com>
  * @copyright   Copyright (c) 2012, Pagadito.com
@@ -288,14 +290,14 @@ class Pagadito
     }
 
     /**
-     * Devuelve el monto total de la transacción consultada, después de un get_status().
-     * @return string
+     * Devuelve el monto calculado de la comismion Pagadito.
+     * Funcion creada por Gamatecnologias.com <soporte@gamatecnologias.com>
      */
     public function get_commision()
-    {// Forumula 5% + $0.25 + Impuesto Local
+    { // Forumula 5% + $0.25 + Impuesto Local
         $valor = $this->return_attr_value("amount") * 0.05;
         $valor = $valor + 0.25;
-        $valor = $valor + ($valor * 0.13);
+        $valor = $valor + ($valor * 0.13); // Suma del impuesto al calculo de la transaccion
         return $valor;
     }
 
@@ -387,6 +389,20 @@ class Pagadito
     public function change_currency_dop()
     {
         $this->currency = "DOP";
+    }
+
+    /**
+     * Cambia la moneda a la enviada por parametro, en caso que la moneda no sea aceptada devolvera false.
+     * Funcion creada por Gamatecnologias.com <soporte@gamatecnologias.com>
+     */
+    public function change_currency($newcurrency)
+    {
+        if (in_array($newcurrency, array("DOP", "PAB", "CRC", "NIO", "HNL", "GTQ", "USD"))) {
+            $this->currency = $newcurrency;
+            return false;
+        } else {
+            return false;
+        }
     }
 
     //*********************************** Funciones Privadas

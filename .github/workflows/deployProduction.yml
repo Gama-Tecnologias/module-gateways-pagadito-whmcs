@@ -1,3 +1,4 @@
+# Deploy desarrollado por Gamatecnologias.com <soporte@gamatecnologias.com>
 name: Publicar en Producción
 on:
   push:
@@ -17,7 +18,7 @@ jobs:
       - name: Subir archivos por FTP al servidor
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with:
-          server: ${{ secrets.FTP_URL }}
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ${{ secrets.FTP_DIR }}
+          server: ${{ secrets.FTP_URL }} # URL del servidor donde se publicara el nuevo modulo
+          username: ${{ secrets.FTP_USER }} # Usuario del FTP del servidor
+          password: ${{ secrets.FTP_PASSWORD }} # Contraseña del FTP del servidor
+          server-dir: ${{ secrets.FTP_DIR }} # Direcctorio de instalacion de WHMCS
