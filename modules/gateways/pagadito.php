@@ -17,9 +17,7 @@ if (!defined("WHMCS")) {
     die("This file cannot be accessed directly");
 }
 
-/**
- * Metadata relacionada al modulo.
- */
+// Metadata relacionada al modulo.
 function pagadito_MetaData()
 {
     return array(
@@ -33,6 +31,7 @@ function pagadito_MetaData()
  */
 function pagadito_config()
 {
+    $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
     return array(
         'FriendlyName' => array(
             'Type' => 'System',
@@ -183,11 +182,11 @@ function pagadito_config()
             'Default' => 'noenviar',
             'Description' => 'Parametro #5 que se va a enviar a Pagadito',
         ),
-        "urlretorno" => array(
-            "FriendlyName"  => "URL Retorno",
-            "Type"          => "textarea",
-            "Descripcion"   => "Copie esta dirección y agréguela en el administrador de pagadito como URL de retorno",
-            "Default"       => $CONFIG['SystemURL']."/modules/gateways/callback/pagadito.php?token={value}&fac={ern_value}"
+        'urlretorno' => array(
+            'FriendlyName'  => 'URL Retorno',
+            'Type' => 'label',
+            'Description'   => 'Copie esta dirección y agréguela en el administrador de pagadito como URL de retorno </br>'. 
+            $actual_link . '/modules/gateways/callback/pagadito.php?token={value}&fac={ern_value}' ,
         ),
     );
 }
