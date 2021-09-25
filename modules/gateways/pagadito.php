@@ -82,6 +82,13 @@ function pagadito_config()
             'Default' => '',
             'Description' => 'Imagen tarjetas para la factura, 200px por 30px maximo',
         ),
+        'porImpuesto' => array(
+            'FriendlyName' => 'Porcentaje de Impuesto Local',
+            'Type' => 'text',
+            'Size' => '2',
+            'Default' => '13',
+            'Description' => 'Número utilizado para el calculo de impuesto.',
+        ),
         'param1' => array(
             'FriendlyName' => 'Parametro #1',
             'Type' => 'dropdown',

@@ -30,6 +30,7 @@ $gatewayParams = getGatewayVariables($gatewayModuleName);
 $pagaditoUID = ($gatewayParams['sandbox_active'] == "on" ?  $gatewayParams['sandbox_pagadito_UID'] : $gatewayParams['pagadito_UID']);
 $pagaditoWSK = ($gatewayParams['sandbox_active'] == "on" ?  $gatewayParams['sandbox_pagadito_WSK'] : $gatewayParams['pagadito_WSK']);
 $sandboxActive = $gatewayParams['sandbox_active'];
+$porImpuesto = (int)$gatewayParams['porImpuesto'];
 $pagadito_token = $_GET["token"];
 $invoiceId = $_GET["fac"];
 
@@ -70,7 +71,7 @@ if (isset($_GET["token"]) && $_GET["token"] != "") {
                     // Se valida si la transaccion ya fue aplicada en sistema para no duplicar transacciones
                     checkCbTransID($transactionId);
                     // Se agrega la transaccion al sistema WHMCS para marcar como paga la Factura
-                    addInvoicePayment($invoiceId, $transactionId, $Pagadito->get_total_amount(), $Pagadito->get_commision(), $gatewayModuleName);
+                    addInvoicePayment($invoiceId, $transactionId, $Pagadito->get_total_amount(), $Pagadito->get_commision($porImpuesto), $gatewayModuleName);
                     header('Location: /viewinvoice.php?id=' . $invoiceId . '&paymentsuccess=true');
                     break;
                 case "REGISTERED":

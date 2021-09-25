@@ -293,11 +293,11 @@ class Pagadito
      * Devuelve el monto calculado de la comismion Pagadito.
      * Funcion creada por Gamatecnologias.com <soporte@gamatecnologias.com>
      */
-    public function get_commision()
+    public function get_commision($porImpuesto)
     { // Forumula 5% + $0.25 + Impuesto Local
         $valor = $this->return_attr_value("amount") * 0.05;
         $valor = $valor + 0.25;
-        $valor = $valor + ($valor * 0.13); // Suma del impuesto al calculo de la transaccion
+        $valor = $valor + ($valor * ($porImpuesto / 100)); // Suma del impuesto al calculo de la transaccion
         return $valor;
     }
 
