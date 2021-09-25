@@ -66,7 +66,7 @@ if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
 
         // Asigana la moneda correcta a la transaccion, en caso que la moneda no este en las permitidas mostrar un error.
         if (!$Pagadito->change_currency($currencyCode)) {
-            echo "<SCRIPT>alert('Moneda no aceptada, consutla con el administrador.');location.href = \"/clientarea.php?action=invoices\";</SCRIPT>";
+            echo "<SCRIPT>alert('Moneda no aceptada, consutla con el administrador. \n Moneda facturada: ".$currencyCode." \n Monedas permitidas: DOP, PAB, CRC, NIO, HNL, GTQ, USD');location.href = \"/clientarea.php?action=invoices\";</SCRIPT>";
         }
 
         // Se ejecuta la transaccion y se envia el Id de la factura WHMCS
