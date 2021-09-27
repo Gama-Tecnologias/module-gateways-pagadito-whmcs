@@ -30,7 +30,7 @@ $gatewayParams = getGatewayVariables($gatewayModuleName);
 $pagaditoUID = ($gatewayParams['sandbox_active'] == "on" ?  $gatewayParams['sandbox_pagadito_UID'] : $gatewayParams['pagadito_UID']);
 $pagaditoWSK = ($gatewayParams['sandbox_active'] == "on" ?  $gatewayParams['sandbox_pagadito_WSK'] : $gatewayParams['pagadito_WSK']);
 $sandboxActive = $gatewayParams['sandbox_active'];
-$porImpuesto = (int)$gatewayParams['porImpuesto'];
+$porImpuesto = intval( $gatewayParams['porImpuesto'] );
 $pagadito_token = $_GET["token"];
 $invoiceId = $_GET["fac"];
 
