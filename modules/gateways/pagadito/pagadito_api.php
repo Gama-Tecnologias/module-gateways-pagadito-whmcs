@@ -92,9 +92,8 @@ class Pagadito
             );
             $this->response = $this->call($params);
             if ($this->get_rs_code() == "PG1002") {
-                return true; //Error
-                //header("Location: " . urldecode($this->get_rs_value()));
-                //exit();
+                header("Location: " . urldecode($this->get_rs_value()));
+                exit();
             } else {
                 return false;
             }
@@ -400,7 +399,7 @@ class Pagadito
     {
         if (in_array($newcurrency, array("DOP", "PAB", "CRC", "NIO", "HNL", "GTQ", "USD"))) {
             $this->currency = $newcurrency;
-            return false;
+            return true;
         } else {
             return false;
         }

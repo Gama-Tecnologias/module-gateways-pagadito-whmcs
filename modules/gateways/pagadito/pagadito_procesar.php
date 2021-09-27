@@ -27,7 +27,7 @@ $pagosPreautorizados = urldecode($_POST["pagosPreautorizados"]);
 $invoiceid = urldecode($_POST["invoiceid"]);
 $description = urldecode($_POST["description"]);
 $amount = urldecode($_POST["amount"]);
-$currencyCode = urldecode($_POST["currencyCode"]);
+$currencyCode = trim(urldecode($_POST["currencyCode"]));
 $param1 = urldecode($_POST["param1"]);
 $param2 = urldecode($_POST["param2"]);
 $param3 = urldecode($_POST["param3"]);
@@ -69,7 +69,7 @@ try {
 
             // Asigana la moneda correcta a la transaccion, en caso que la moneda no este en las permitidas mostrar un error.
             if (!$Pagadito->change_currency($currencyCode)) {
-                echo "<SCRIPT>alert('Moneda no aceptada, consutla con el administrador. \n Moneda facturada: ".$currencyCode." \n Monedas permitidas: DOP, PAB, CRC, NIO, HNL, GTQ, USD');location.href = \"/clientarea.php?action=invoices\";</SCRIPT>";
+                echo "<SCRIPT>alert(\"Moneda no aceptada, consutla con el administrador.  Moneda facturada: ".$currencyCode."  Monedas permitidas: DOP, PAB, CRC, NIO, HNL, GTQ, USD\");location.href = \"/clientarea.php?action=invoices\";</SCRIPT>";
             }
 
             // Se ejecuta la transaccion y se envia el Id de la factura WHMCS
