@@ -84,7 +84,7 @@ function pagadito_config()
         ),
         'porImpuesto' => array(
             'FriendlyName' => 'Porcentaje de Impuesto Local',
-            'Type' => 'number',
+            'Type' => 'text',
             'Size' => '2',
             'Default' => '13',
             'Description' => 'Número utilizado para el calculo de impuesto de la comisión de pagadito. Desde 0 hasta 99',
