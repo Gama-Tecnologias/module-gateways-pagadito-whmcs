@@ -34,6 +34,8 @@ $param3 = urldecode($_POST["param3"]);
 $param4 = urldecode($_POST["param4"]);
 $param5 = urldecode($_POST["param5"]);
 
+//echo json_encode([$returnUrl,$pagaditoUID, $pagaditoWSK,$sandboxActive,$pagosPreautorizados,$invoiceid, $description,$amount,$currencyCode, $param1 ,$param2 ,$param3 ,$param4 ,$param5  ]);
+
 try {
     // Validacion si monto es positivo y si existen las variables para llamar el API Pagadito
     if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {

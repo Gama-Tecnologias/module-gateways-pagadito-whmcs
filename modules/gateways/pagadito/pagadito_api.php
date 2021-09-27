@@ -92,8 +92,9 @@ class Pagadito
             );
             $this->response = $this->call($params);
             if ($this->get_rs_code() == "PG1002") {
-                header("Location: " . urldecode($this->get_rs_value()));
-                exit();
+                return true; //Error
+                //header("Location: " . urldecode($this->get_rs_value()));
+                //exit();
             } else {
                 return false;
             }
@@ -296,8 +297,8 @@ class Pagadito
     public function get_commision($porImpuesto)
     { // Forumula 5% + $0.25 + Impuesto Local
         $valor = $this->return_attr_value("amount") * 0.05;
-        $valor = $valor + 0.25;
-        $valor = $valor + ($valor * ($porImpuesto / 100)); // Suma del impuesto al calculo de la transaccion
+        $valor += 0.25;
+        $valor += $valor * ($porImpuesto / 100); // Suma del impuesto al calculo de la transaccion
         return $valor;
     }
 
