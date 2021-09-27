@@ -34,51 +34,57 @@ $param3 = urldecode($_POST["param3"]);
 $param4 = urldecode($_POST["param4"]);
 $param5 = urldecode($_POST["param5"]);
 
-// Validacion si monto es positivo y si existen las variables para llamar el API Pagadito
-if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
+$libreriasweet = "<script src='//cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
 
-    // Se crea el objeto Pagadito nusoap_client, al que se le pasan los parametros de UID y WSK   
-    $Pagadito = new Pagadito($pagaditoUID, $pagaditoWSK);
+try {
+    // Validacion si monto es positivo y si existen las variables para llamar el API Pagadito
+    if ($amount > 0 and !empty($pagaditoUID) and !empty($pagaditoWSK)) {
 
-    // Se llama la funcion mode_sandbox_on en caso que el parametro de SandBox este en ON    
-    if ($sandboxActive == "on") $Pagadito->mode_sandbox_on();
+        // Se crea el objeto Pagadito nusoap_client, al que se le pasan los parametros de UID y WSK   
+        $Pagadito = new Pagadito($pagaditoUID, $pagaditoWSK);
 
-    // Validamos la conexión llamando a la función connect()
-    if ($Pagadito->connect()) {
+        // Se llama la funcion mode_sandbox_on en caso que el parametro de SandBox este en ON    
+        if ($sandboxActive == "on") $Pagadito->mode_sandbox_on();
 
-        // Se leen los detalles de la factura para enviar a Pagadito
-        $invoice = localAPI('GetInvoice', array('invoiceid' => $invoiceid), '');
-        foreach ($invoice['items']['item'] as $item) {
-            if ($invoice['amount'] > 0) $Pagadito->add_detail(1, $item['description'] . ($item['taxed'] == "1" ? "  + IVA" : ""), $item['amount'], $returnUrl);
-        }
-        //Se obtiene el monto de impuestos y se envia a Pagadito como una linea adicional
-        if ($invoice['tax'] > 0) $Pagadito->add_detail(1, 'IVA', $invoice['tax'], $returnUrl);
+        // Validamos la conexión llamando a la función connect()
+        if ($Pagadito->connect()) {
 
-        //Agregando campos personalizados de la transacción en caso que se enviaran
-        if ($param1 !== "noenviar") $Pagadito->set_custom_param("param1", $param1);
-        if ($param2 !== "noenviar") $Pagadito->set_custom_param("param2", $param2);
-        if ($param3 !== "noenviar") $Pagadito->set_custom_param("param3", $param3);
-        if ($param4 !== "noenviar") $Pagadito->set_custom_param("param4", $param4);
-        if ($param5 !== "noenviar") $Pagadito->set_custom_param("param5", $param5);
+            // Se leen los detalles de la factura para enviar a Pagadito
+            $invoice = localAPI('GetInvoice', array('invoiceid' => $invoiceid), '');
+            foreach ($invoice['items']['item'] as $item) {
+                if ($invoice['amount'] > 0) $Pagadito->add_detail(1, $item['description'] . ($item['taxed'] == "1" ? "  + IVA" : ""), $item['amount'], $returnUrl);
+            }
+            //Se obtiene el monto de impuestos y se envia a Pagadito como una linea adicional
+            if ($invoice['tax'] > 0) $Pagadito->add_detail(1, 'IVA', $invoice['tax'], $returnUrl);
 
-        // Habilita la recepción de pagos preautorizados para la orden de cobro en caso que el parametro de SandBox este en ON
-        if ($pagosPreautorizados == "on") $Pagadito->enable_pending_payments();
+            //Agregando campos personalizados de la transacción en caso que se enviaran
+            if ($param1 !== "noenviar") $Pagadito->set_custom_param("param1", $param1);
+            if ($param2 !== "noenviar") $Pagadito->set_custom_param("param2", $param2);
+            if ($param3 !== "noenviar") $Pagadito->set_custom_param("param3", $param3);
+            if ($param4 !== "noenviar") $Pagadito->set_custom_param("param4", $param4);
+            if ($param5 !== "noenviar") $Pagadito->set_custom_param("param5", $param5);
 
-        // Asigana la moneda correcta a la transaccion, en caso que la moneda no este en las permitidas mostrar un error.
-        if (!$Pagadito->change_currency($currencyCode)) {
-            echo "<SCRIPT>alert('Moneda no aceptada, consutla con el administrador. \n Moneda facturada: ".$currencyCode." \n Monedas permitidas: DOP, PAB, CRC, NIO, HNL, GTQ, USD');location.href = \"/clientarea.php?action=invoices\";</SCRIPT>";
-        }
+            // Habilita la recepción de pagos preautorizados para la orden de cobro en caso que el parametro de SandBox este en ON
+            if ($pagosPreautorizados == "on") $Pagadito->enable_pending_payments();
 
-        // Se ejecuta la transaccion y se envia el Id de la factura WHMCS
-        if (!$Pagadito->exec_trans($invoiceid)) {
-            // En caso que falle se mostrara un error con la descripcon
-            echo "<SCRIPT>alert(\"" . $Pagadito->get_rs_code() . ": " . $Pagadito->get_rs_message() . "\");location.href = \"/clientarea.php?action=invoices\";</SCRIPT>";
+            // Asigana la moneda correcta a la transaccion, en caso que la moneda no este en las permitidas mostrar un error.
+            if (!$Pagadito->change_currency($currencyCode)) {
+                echo $libreriasweet."<SCRIPT>Swal.fire('Moneda no aceptada, consutla con el administrador. \n Moneda facturada: ".$currencyCode." \n Monedas permitidas: DOP, PAB, CRC, NIO, HNL, GTQ, USD');location.href = \"/clientarea.php?action=invoices\";</SCRIPT>";
+            }
+
+            // Se ejecuta la transaccion y se envia el Id de la factura WHMCS
+            if (!$Pagadito->exec_trans($invoiceid)) {
+                // En caso que falle se mostrara un error con la descripcon
+                echo $libreriasweet."<SCRIPT>Swal.fire(\"" . $Pagadito->get_rs_code() . ": " . $Pagadito->get_rs_message() . "\");location.href = \"/clientarea.php?action=invoices\";</SCRIPT>";
+            }
+        } else {
+            // En caso de fallar la conexión, verificamos el error devuelto.         
+            echo $libreriasweet."<SCRIPT>Swal.fire(\"" . $Pagadito->get_rs_code() . ": " . $Pagadito->get_rs_message() . "\");location.href = \"/clientarea.php?action=invoices\";</SCRIPT>";
         }
     } else {
-        // En caso de fallar la conexión, verificamos el error devuelto.         
-        echo "<SCRIPT>alert(\"" . $Pagadito->get_rs_code() . ": " . $Pagadito->get_rs_message() . "\");location.href = \"/clientarea.php?action=invoices\";</SCRIPT>";
+        // Si no pasa las primeras validacion envia al index
+        header('Location: /index.php');
     }
-} else {
-    // Si no pasa las primeras validacion envia al index
-    header('Location: /index.php');
+} catch (Exception $e) {
+    echo $libreriasweet."<SCRIPT>Swal.fire(\"Excepción no controlada:" . $e->getMessage() . "\");location.href = \"/clientarea.php?action=invoices\";</SCRIPT>";          
 }
