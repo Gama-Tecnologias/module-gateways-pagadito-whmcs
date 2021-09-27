@@ -297,7 +297,7 @@ class Pagadito
     { // Forumula 5% + $0.25 + Impuesto Local
         $valor = $this->return_attr_value("amount") * 0.05;
         $valor += 0.25;
-        $valor += $valor * ($porImpuesto / 100); // Suma del impuesto al calculo de la transaccion
+        if ($porImpuesto > 0 ) $valor += $valor * ($porImpuesto / 100); // Suma del impuesto al calculo de la transaccion
         return $valor;
     }
 
