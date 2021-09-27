@@ -22,7 +22,7 @@ function pagadito_MetaData()
 {
     return array(
         'DisplayName' => 'Tarjeta de Crédito o Debito',
-        'APIVersion' => '1.0.0',
+        'APIVersion' => '1.0.1',
     );
 }
 
@@ -40,28 +40,28 @@ function pagadito_config()
         'pagadito_UID' => array(
             'FriendlyName' => 'Pagadito UID',
             'Type' => 'password',
-            'Size' => '50',
+            'Size' => '35',
             'Default' => '',
             'Description' => 'Ingreso su UID proporcionado por Pagadito',
         ),
         'pagadito_WSK' => array(
             'FriendlyName' => 'Pagadito WSK',
             'Type' => 'password',
-            'Size' => '50',
+            'Size' => '35',
             'Default' => '',
             'Description' => 'Ingreso su WSK proporcionado por Pagadito',
         ),
         'sandbox_pagadito_UID' => array(
             'FriendlyName' => 'Pagadito UID SandBox',
             'Type' => 'password',
-            'Size' => '50',
+            'Size' => '35',
             'Default' => '',
             'Description' => 'Ingreso su UID proporcionado por Pagadito',
         ),
         'sandbox_pagadito_WSK' => array(
             'FriendlyName' => 'Pagadito WSK SandBox',
             'Type' => 'password',
-            'Size' => '50',
+            'Size' => '35',
             'Default' => '',
             'Description' => 'Ingreso su WSK proporcionado por Pagadito',
         ),
@@ -84,10 +84,10 @@ function pagadito_config()
         ),
         'porImpuesto' => array(
             'FriendlyName' => 'Porcentaje de Impuesto Local',
-            'Type' => 'text',
+            'Type' => 'number',
             'Size' => '2',
             'Default' => '13',
-            'Description' => 'Número utilizado para el calculo de impuesto.',
+            'Description' => 'Número utilizado para el calculo de impuesto de la comisión de pagadito. Desde 0 hasta 99',
         ),
         'param1' => array(
             'FriendlyName' => 'Parametro #1',
