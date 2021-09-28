@@ -195,6 +195,12 @@ function pagadito_config()
             'Description'   => 'Copie esta dirección y agréguela en el administrador de pagadito como URL de retorno </br>'. 
             $actual_link . '/modules/gateways/callback/pagadito.php?token={value}&fac={ern_value}' ,
         ),
+        'urlwebhook' => array(
+            'FriendlyName'  => 'URL Webhook',
+            'Type' => 'label',
+            'Description'   => 'Copie esta dirección y agréguela en el administrador de pagadito como URL de Webhook</br>'. 
+            $actual_link . '/modules/gateways/pagadito/webhook' ,
+        ),
     );
 }
 
