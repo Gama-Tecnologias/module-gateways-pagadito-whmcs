@@ -52,7 +52,7 @@ try {
             // Se leen los detalles de la factura para enviar a Pagadito
             $invoice = localAPI('GetInvoice', array('invoiceid' => $invoiceid), '');
             foreach ($invoice['items']['item'] as $item) {
-                $Pagadito->add_detail(1, $item['description'] . ($item['taxed'] == "1" ? "  + IVA" : ""), $item['amount'], $returnUrl);
+                $Pagadito->add_detail(1, substr( trim( preg_replace("/[\r\n|\n|\r]+/", " / ", $item['description'])), 0,150) . ($item['taxed'] == "1" ? "  + IVA" : ""), $item['amount'], $returnUrl);
             }
             //Se obtiene el monto de impuestos y se envia a Pagadito como una linea adicional
             if ($invoice['tax'] > 0) $Pagadito->add_detail(1, 'IVA', $invoice['tax'], $returnUrl);
