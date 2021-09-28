@@ -60,14 +60,16 @@ if (isset($_GET["token"]) && $_GET["token"] != "") {
             // Almacenamos el estado de la transaccion devuelto por la API
             $status_transaccion = $Pagadito->get_rs_status();
 
+            // Se obtiene la transaccion de pagadito
+            $transactionId = $Pagadito->get_rs_reference();
+
             // Se registra el log de la transaccion en el sistema de logs de WHMCS
-            logTransaction($gatewayModuleName, $_POST, $status_transaccion);
+            logTransaction($gatewayModuleName, [ $_GET, $transactionId, $invoiceId ] $_GET, $status_transaccion);
 
             // Segun el estado resultanta de la transaccion se ejecutan proceso o bien se retornan errores
             switch ($status_transaccion) {
                 case "COMPLETED":
-                    // Se obtiene la transaccion de pagadito
-                    $transactionId = $Pagadito->get_rs_reference();
+                    
                     // Se valida si la transaccion ya fue aplicada en sistema para no duplicar transacciones
                     checkCbTransID($transactionId);
                     // Se agrega la transaccion al sistema WHMCS para marcar como paga la Factura

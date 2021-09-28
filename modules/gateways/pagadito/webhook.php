@@ -77,13 +77,13 @@ if ($resultado == 1) { // verificación de la firma exitosa
         case 'COMPLETED':
             // Completar la transaccion
             addInvoicePayment($invoiceId, $obj_data->resource->reference, $obj_data->resource->amount->total , get_commision($obj_data->resource->amount->total, $porImpuesto), $gatewayModuleName);
-            logTransaction($gatewayModuleName, $obj_data , $obj_data->resource->reference );
+            logTransaction($gatewayModuleName, $obj_data , $obj_data->resource->status );
             http_response_code(200);
             break;
         default:
             // Poderecto tomar la transaccion como fallida
             // REVOKED, FAILED, CANCELED, EXPIRED, VERIFYING, REGISTERED
-            logTransaction($gatewayModuleName, $obj_data , $obj_data->resource->reference );
+            logTransaction($gatewayModuleName, $obj_data , $obj_data->resource->status );
             http_response_code(200);
             break;
     }    
