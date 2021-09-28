@@ -11,7 +11,7 @@
  *
  * @author      Pagadito.com <soporte@pagadito.com>
  * @copyright   Copyright (c) 2012, Pagadito.com
- * @version     PHP 1.5.1
+ * @version     1.0.1
  * @link        https://dev.pagadito.com/index.php?mod=docs&hac=apipg#php
  */
 
