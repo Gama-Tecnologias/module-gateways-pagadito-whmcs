@@ -64,7 +64,7 @@ if (isset($_GET["token"]) && $_GET["token"] != "") {
             $transactionId = $Pagadito->get_rs_reference();
 
             // Se registra el log de la transaccion en el sistema de logs de WHMCS
-            logTransaction($gatewayModuleName, [ $_GET, $transactionId, $invoiceId ], $status_transaccion);
+            logTransaction($gatewayModuleName, json_encode(array( [ 'token' => $_GET["token"], 'transactionId' => $transactionId, 'invoiceId' => $invoiceId ])), $status_transaccion);
 
             // Segun el estado resultanta de la transaccion se ejecutan proceso o bien se retornan errores
             switch ($status_transaccion) {
