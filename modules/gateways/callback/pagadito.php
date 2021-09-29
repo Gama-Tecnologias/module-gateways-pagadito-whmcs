@@ -79,30 +79,30 @@ if (isset($_GET["token"]) && $_GET["token"] != "") {
                     checkCbTransID($transactionId);
                     // Se agrega la transaccion al sistema WHMCS para marcar como paga la Factura
                     addInvoicePayment($invoiceId, $transactionId, $totalAmount , $commision, $gatewayModuleName);
-                    execheader($invoiceId , '&paymentsuccess=true');
+                    execheader($invoiceId , 'paymentsuccess');
                     break;
                 case "REGISTERED":
-                    execheader($invoiceId , '&paymentinititated=true');
+                    execheader($invoiceId , 'paymentinititated');
                     break;
                 case "VERIFYING":
-                    execheader($invoiceId , '&pendingreview=true');
+                    execheader($invoiceId , 'pendingreview');
                     break;
                 default: // REVOKED, FAILED
-                    execheader($invoiceId ,'&paymentfailed=true');
+                    execheader($invoiceId ,'paymentfailed');
                     break;
             }
         } else {
             // En caso que falle se mostrara un error con la descripcon
-            execheader($invoiceId , '&paymentfailed=true');
+            execheader($invoiceId , 'paymentfailed');
         }
     } else {
         // En caso de fallar la conexión, verificamos el error devuelto.  
-        execheader($invoiceId , '&paymentfailed=true');
+        execheader($invoiceId , 'paymentfailed');
     }
 } else {
     header('Location: /index.php');
 }
 
 function execheader($invoice, $parametro){
-    header('Location: /viewinvoice.php?id=' . $invoice . $parametro);
+    header('Location: /viewinvoice.php?id=' . $invoice ."&". $parametro."=true");
  }
