@@ -199,7 +199,7 @@ function pagadito_config()
             'FriendlyName'  => 'URL Webhook',
             'Type' => 'label',
             'Description'   => 'Copie esta dirección y agréguela en el administrador de pagadito como URL de Webhook</br>'. 
-            $actual_link . '/modules/gateways/pagadito/webhook/' ,
+            $actual_link . '/modules/gateways/pagadito/webhook.php' ,
         ),
     );
 }
