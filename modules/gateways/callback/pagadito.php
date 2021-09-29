@@ -64,12 +64,11 @@ if (isset($_GET["token"]) && $_GET["token"] != "") {
             $transactionId = $Pagadito->get_rs_reference();
 
             // Se registra el log de la transaccion en el sistema de logs de WHMCS
-            logTransaction($gatewayModuleName, [ $_GET, $transactionId, $invoiceId ] $_GET, $status_transaccion);
+            logTransaction($gatewayModuleName, [ $_GET, $transactionId, $invoiceId ], $status_transaccion);
 
             // Segun el estado resultanta de la transaccion se ejecutan proceso o bien se retornan errores
             switch ($status_transaccion) {
-                case "COMPLETED":
-                    
+                case "COMPLETED":                    
                     // Se valida si la transaccion ya fue aplicada en sistema para no duplicar transacciones
                     checkCbTransID($transactionId);
                     // Se agrega la transaccion al sistema WHMCS para marcar como paga la Factura
