@@ -33,7 +33,7 @@ $sandboxActive = $gatewayParams['sandbox_active'];
 $porImpuesto = intval( $gatewayParams['porImpuesto'] );
 
 // obtener headers
-$headers = getallheaders();
+$headers = htmlspecialchars( getallheaders());
 $notification_id = $headers['PAGADITO-NOTIFICATION-ID'];
 $notification_timestamp = $headers['PAGADITO-NOTIFICATION-TIMESTAMP'];
 $auth_algo = $headers['PAGADITO-AUTH-ALGO'];
