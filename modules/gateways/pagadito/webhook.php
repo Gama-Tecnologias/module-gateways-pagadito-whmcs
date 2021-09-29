@@ -91,11 +91,11 @@ if ($resultado == 1) { // verificación de la firma exitosa
             break;
     }    
 } elseif ($resultado == 0) { // verificación de la firma invalida
-    logTransaction($gatewayModuleName, "Error, firma invalida. ".$ip , "Error" );
+    logTransaction($gatewayModuleName, array('Data' => "Error, firma invalida.", 'ip' => $ip ) , "Error" );
     http_response_code(401);
 } else { // error realizando la verificación de la firma
     // Se registra el log de la transaccion en el sistema de logs de WHMCS
-    logTransaction($gatewayModuleName, "Error realizando la verificaion de la firma. ".$ip , "Error" );
+    logTransaction($gatewayModuleName, array('Data' => "Error realizando la verificaion de la firma.", 'ip' => $ip ) , "Error" );
     http_response_code(400);
 }
 
