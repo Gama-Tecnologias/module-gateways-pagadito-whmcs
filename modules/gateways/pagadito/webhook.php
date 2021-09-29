@@ -23,6 +23,9 @@ $gatewayModuleName = "pagadito";
 // Fetch gateway configuration parameters.
 $gatewayParams = getGatewayVariables($gatewayModuleName);
 
+$ip = $_SERVER['HTTP_CLIENT_IP'] ? $_SERVER['HTTP_CLIENT_IP'] : ($_SERVER['HTTP_X_FORWARDED_FOR'] ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
+
+
 // Obtener parametros del el modulo necesarios para validar el pago con Pagadito
 $pagaditoUID = ($gatewayParams['sandbox_active'] == "on" ?  $gatewayParams['sandbox_pagadito_UID'] : $gatewayParams['pagadito_UID']);
 $pagaditoWSK = ($gatewayParams['sandbox_active'] == "on" ?  $gatewayParams['sandbox_pagadito_WSK'] : $gatewayParams['pagadito_WSK']);
@@ -77,22 +80,22 @@ if ($resultado == 1) { // verificación de la firma exitosa
         case 'COMPLETED':
             // Completar la transaccion
             addInvoicePayment($invoiceId, $obj_data->resource->reference, $obj_data->resource->amount->total , get_commision($obj_data->resource->amount->total, $porImpuesto), $gatewayModuleName);
-            logTransaction($gatewayModuleName, $obj_data , $obj_data->resource->status );
+            logTransaction($gatewayModuleName, array('Data' => $obj_data, 'ip' => $ip ) , $obj_data->resource->status );
             http_response_code(200);
             break;
         default:
             // Poderecto tomar la transaccion como fallida
             // REVOKED, FAILED, CANCELED, EXPIRED, VERIFYING, REGISTERED
-            logTransaction($gatewayModuleName, $obj_data , $obj_data->resource->status );
+            logTransaction($gatewayModuleName, array('Data' => $obj_data, 'ip' => $ip ) , $obj_data->resource->status );
             http_response_code(200);
             break;
     }    
 } elseif ($resultado == 0) { // verificación de la firma invalida
-    logTransaction($gatewayModuleName, "Error, firma invalida. ".$_SERVER['HTTP_CLIENT_IP'] , "Error" );
+    logTransaction($gatewayModuleName, "Error, firma invalida. ".$ip , "Error" );
     http_response_code(401);
 } else { // error realizando la verificación de la firma
     // Se registra el log de la transaccion en el sistema de logs de WHMCS
-    logTransaction($gatewayModuleName, "Error realizando la verificaion de la firma. ".$_SERVER['HTTP_CLIENT_IP'] , "Error" );
+    logTransaction($gatewayModuleName, "Error realizando la verificaion de la firma. ".$ip , "Error" );
     http_response_code(400);
 }
 
