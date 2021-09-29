@@ -68,7 +68,7 @@ if (isset($_GET["token"]) && $_GET["token"] != "") {
 
             // Calculo de comision de pagadito
             $commision = $Pagadito->get_commision($porImpuesto);
-
+           
             // Se registra el log de la transaccion en el sistema de logs de WHMCS
             logTransaction($gatewayModuleName, array( 'token' => $_GET["token"], 'transactionId' => $transactionId, 'invoiceId' => $invoiceId, 'totalAmount' => $totalAmount, 'commision' => $commision ) , $status_transaccion);
 
@@ -79,32 +79,30 @@ if (isset($_GET["token"]) && $_GET["token"] != "") {
                     checkCbTransID($transactionId);
                     // Se agrega la transaccion al sistema WHMCS para marcar como paga la Factura
                     addInvoicePayment($invoiceId, $transactionId, $totalAmount , $commision, $gatewayModuleName);
-                    header('Location: /viewinvoice.php?id=' . $invoiceId . '&paymentsuccess=true');
+                    execheader($invoiceId , '&paymentsuccess=true');
                     break;
                 case "REGISTERED":
-                    header('Location: /viewinvoice.php?id=' . $invoiceId . '&paymentinititated=true');
+                    execheader($invoiceId , '&paymentinititated=true');
                     break;
                 case "VERIFYING":
-                    header('Location: /viewinvoice.php?id=' . $invoiceId . '&pendingreview=true');
+                    execheader($invoiceId , '&pendingreview=true');
                     break;
-                case "REVOKED":
-                    header('Location: /viewinvoice.php?id=' . $invoiceId . '&paymentfailed=true');
-                    break;
-                case "FAILED":
-                    header('Location: /viewinvoice.php?id=' . $invoiceId . '&paymentfailed=true');
-                    break;
-                default:
-                    header('Location: /viewinvoice.php?id=' . $invoiceId . '&paymentfailed=true');
+                default: // REVOKED, FAILED
+                    execheader($invoiceId ,'&paymentfailed=true');
                     break;
             }
         } else {
             // En caso que falle se mostrara un error con la descripcon
-            header('Location: /viewinvoice.php?id=' . $invoiceId . '&paymentfailed=true');
+            execheader($invoiceId , '&paymentfailed=true');
         }
     } else {
         // En caso de fallar la conexión, verificamos el error devuelto.  
-        header('Location: /viewinvoice.php?id=' . $invoiceId . '&paymentfailed=true');
+        execheader($invoiceId , '&paymentfailed=true');
     }
 } else {
     header('Location: /index.php');
 }
+
+function execheader($invoice, $parametro){
+    header('Location: /viewinvoice.php?id=' . $invoice . $parametro);
+ }
