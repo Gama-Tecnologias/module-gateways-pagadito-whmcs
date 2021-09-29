@@ -160,15 +160,15 @@ function pagadito_config()
  */
 function paramOpcional($name, $params)
 {
+    $result = "noenviar";
     if (in_array($params[$name], array("invoiceid", "description", "amount"))) {
-        return $params[$params[$name]];
+        $result = $params[$params[$name]];
     } elseif (in_array($params[$name], array("email", "address1", "address2", "city", "state", "postcode", "country"))) {
-        return $params['clientdetails'][$params[$name]];
+        $result = $params['clientdetails'][$params[$name]];
     } elseif ($params[$name] == "fullname") {
-        return $params['clientdetails']["firstname"] . " " . $params['clientdetails']["lastname"];
-    } else {
-        return "noenviar";
+        $result = $params['clientdetails']["firstname"] . " " . $params['clientdetails']["lastname"];
     }
+    return $result;
 }
 
 /**
@@ -220,6 +220,5 @@ function pagadito_link($params)
     $returnStr .= '<input type="submit" value="' . $langPayNow . '" />';
     // Se puede asiganar en configuracion una imagen diferente a la Default de Pagadito
     $returnStr .= '<img src="' . (empty($urlImagen) ? '.\modules\gateways\pagadito\tarjetas-min.png' : $urlImagen) . '" alt="' . $companyName . '"></form>';
-
     return $returnStr;
 }
