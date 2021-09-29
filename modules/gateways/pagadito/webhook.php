@@ -23,8 +23,8 @@ $gatewayModuleName = "pagadito";
 // Fetch gateway configuration parameters.
 $gatewayParams = getGatewayVariables($gatewayModuleName);
 
+// Obtener la IP del host que envia el request para adjuntarlo en los logs
 $ip = $_SERVER['HTTP_CLIENT_IP'] ? $_SERVER['HTTP_CLIENT_IP'] : ($_SERVER['HTTP_X_FORWARDED_FOR'] ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
-
 
 // Obtener parametros del el modulo necesarios para validar el pago con Pagadito
 $pagaditoUID = ($gatewayParams['sandbox_active'] == "on" ?  $gatewayParams['sandbox_pagadito_UID'] : $gatewayParams['pagadito_UID']);
@@ -91,11 +91,11 @@ if ($resultado == 1) { // verificación de la firma exitosa
             break;
     }    
 } elseif ($resultado == 0) { // verificación de la firma invalida
-    logTransaction($gatewayModuleName, array('Data' => "Error, firma invalida.", 'ip' => $ip ) , "Error" );
+    logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip ) , "Error" );
     http_response_code(401);
 } else { // error realizando la verificación de la firma
     // Se registra el log de la transaccion en el sistema de logs de WHMCS
-    logTransaction($gatewayModuleName, array('Data' => "Error realizando la verificaion de la firma.", 'ip' => $ip ) , "Error" );
+    logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip ) , "Error" );
     http_response_code(400);
 }
 
