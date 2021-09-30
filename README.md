@@ -2,6 +2,8 @@
 
 Modulo para procesar pagos con tarjetas por medio de Pagadito.com
 
+Se probo con la versión 8.2.1 de WHMCS
+
 ### Vesiones
 
 * 1.0.1 Se corrigieron problemas al enviar a facturar articulos con grandes descripciones. 28/9/2021
