@@ -49,7 +49,9 @@ if (isset($_GET["token"]) && $_GET["token"] != "") {
     $Pagadito = new Pagadito($pagaditoUID, $pagaditoWSK);
 
     // Se llama la funcion mode_sandbox_on en caso que el parametro de SandBox este en ON    
-    if ($sandboxActive == "on") $Pagadito->mode_sandbox_on();
+    if ($sandboxActive == "on") {
+        $Pagadito->mode_sandbox_on();
+    }
 
     // Validamos la conexión llamando a la función connect()
     if ($Pagadito->connect()) {
