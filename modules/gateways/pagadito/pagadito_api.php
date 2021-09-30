@@ -63,11 +63,7 @@ class Pagadito
             'format_return' => $this->format_return
         );
         $this->response = $this->call($params);
-        if ($this->get_rs_code() == "PG1001") {
-            return true;
-        } else {
-            return false;
-        }
+        return ($this->get_rs_code() == "PG1001");
     }
 
     /**
@@ -117,11 +113,7 @@ class Pagadito
                 'format_return' => $this->format_return
             );
             $this->response = $this->call($params);
-            if ($this->get_rs_code() == "PG1003") {
-                return true;
-            } else {
-                return false;
-            }
+            return ($this->get_rs_code() == "PG1003");
         } else {
             return false;
         }
@@ -297,7 +289,9 @@ class Pagadito
     { // Forumula 5% + $0.25 + Impuesto Local
         $valor = $this->return_attr_value("amount") * 0.05;
         $valor += 0.25;
-        if ($porImpuesto > 0 ) $valor += $valor * ($porImpuesto / 100); // Suma del impuesto al calculo de la transaccion
+        if ($porImpuesto > 0 ){
+            $valor += $valor * ($porImpuesto / 100); // Suma del impuesto al calculo de la transaccion 
+        } 
         return $valor;
     }
 
