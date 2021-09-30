@@ -21,7 +21,7 @@ if (!defined("WHMCS")) {
 function pagadito_MetaData()
 {
     return array(
-        'DisplayName' => 'Tarjeta de Crédito o Debito',
+        'DisplayName' => 'Pagadito Tarjeta de Crédito o Debito',
         'APIVersion' => '1.0.1',
     );
 }
@@ -33,7 +33,7 @@ function pagadito_config()
 {
     $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
     
-    $opciones_parametros = array(
+    $opciones_parametros = 'Options' => array(
                 'noenviar' => 'No enviar',
                 'invoiceid' => 'Numero Factura',
                 'description' => 'Descripcion Pago',
@@ -108,35 +108,35 @@ function pagadito_config()
         'param1' => array(
             'FriendlyName' => 'Parametro #1',
             'Type' => 'dropdown',
-            'Options' => $opciones_parametros,
+            $opciones_parametros,
             'Default' => 'noenviar',
             'Description' => 'Parametro #1 que se va a enviar a Pagadito',
         ),
         'param2' => array(
             'FriendlyName' => 'Parametro #2',
             'Type' => 'dropdown',
-            'Options' => $opciones_parametros,
+            $opciones_parametros,
             'Default' => 'noenviar',
             'Description' => 'Parametro #2 que se va a enviar a Pagadito',
         ),
         'param3' => array(
             'FriendlyName' => 'Parametro #3',
             'Type' => 'dropdown',
-            'Options' => $opciones_parametros,
+            $opciones_parametros,
             'Default' => 'noenviar',
             'Description' => 'Parametro #3 que se va a enviar a Pagadito',
         ),
         'param4' => array(
             'FriendlyName' => 'Parametro #4',
             'Type' => 'dropdown',
-            'Options' => $opciones_parametros,
+            $opciones_parametros,
             'Default' => 'noenviar',
             'Description' => 'Parametro #4 que se va a enviar a Pagadito',
         ),
         'param5' => array(
             'FriendlyName' => 'Parametro #5',
             'Type' => 'dropdown',
-            'Options' => $opciones_parametros,
+            $opciones_parametros,
             'Default' => 'noenviar',
             'Description' => 'Parametro #5 que se va a enviar a Pagadito',
         ),
