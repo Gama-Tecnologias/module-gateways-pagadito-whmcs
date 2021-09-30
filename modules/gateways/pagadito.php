@@ -33,7 +33,7 @@ function pagadito_config()
 {
     $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
     
-    $opciones_parametros = 'Options' => array(
+    $opciones_parametros = array(
                 'noenviar' => 'No enviar',
                 'invoiceid' => 'Numero Factura',
                 'description' => 'Descripcion Pago',
@@ -115,28 +115,28 @@ function pagadito_config()
         'param2' => array(
             'FriendlyName' => 'Parametro #2',
             'Type' => 'dropdown',
-            $opciones_parametros,
+            'Options' => $opciones_parametros,
             'Default' => 'noenviar',
             'Description' => 'Parametro #2 que se va a enviar a Pagadito',
         ),
         'param3' => array(
             'FriendlyName' => 'Parametro #3',
             'Type' => 'dropdown',
-            $opciones_parametros,
+            'Options' => $opciones_parametros,
             'Default' => 'noenviar',
             'Description' => 'Parametro #3 que se va a enviar a Pagadito',
         ),
         'param4' => array(
             'FriendlyName' => 'Parametro #4',
             'Type' => 'dropdown',
-            $opciones_parametros,
+            'Options' => $opciones_parametros,
             'Default' => 'noenviar',
             'Description' => 'Parametro #4 que se va a enviar a Pagadito',
         ),
         'param5' => array(
             'FriendlyName' => 'Parametro #5',
             'Type' => 'dropdown',
-            $opciones_parametros,
+            'Options' => $opciones_parametros,
             'Default' => 'noenviar',
             'Description' => 'Parametro #5 que se va a enviar a Pagadito',
         ),
@@ -219,6 +219,6 @@ function pagadito_link($params)
     $returnStr .= '<input type="hidden" name="param5" value="' . urlencode($param5) . '" />';
     $returnStr .= '<input type="submit" value="' . $langPayNow . '" />';
     // Se puede asiganar en configuracion una imagen diferente a la Default de Pagadito
-    $returnStr .= '<img src="' . (empty($urlImagen) ? '.\modules\gateways\pagadito\tarjetas-min.png' : $urlImagen) . '" alt="' . $companyName . '"></form>';
+    $returnStr .= '<img src="' . (empty($urlImagen) ? '.\modules\gateways\pagadito\pagaditotarjetas-min.png' : $urlImagen) . '" alt="' . $companyName . '"></form>';
     return $returnStr;
 }

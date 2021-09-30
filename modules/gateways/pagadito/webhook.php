@@ -33,7 +33,7 @@ $sandboxActive = $gatewayParams['sandbox_active'];
 $porImpuesto = intval( $gatewayParams['porImpuesto'] );
 
 // obtener headers
-$headers = htmlspecialchars( getallheaders());
+$headers = htmlspecialchars( getallheaders() );
 $notification_id = $headers['PAGADITO-NOTIFICATION-ID'];
 $notification_timestamp = $headers['PAGADITO-NOTIFICATION-TIMESTAMP'];
 $auth_algo = $headers['PAGADITO-AUTH-ALGO'];
@@ -107,6 +107,8 @@ function get_commision($amount, $porImpuesto)
 { // Forumula 5% + $0.25 + Impuesto Local
     $valor = $amount * 0.05;
     $valor += 0.25;
-    if ($porImpuesto > 0 ) $valor += $valor * ($porImpuesto / 100); // Suma del impuesto al calculo de la transaccion
+    if ($porImpuesto > 0 ){
+       $valor += $valor * ($porImpuesto / 100); // Suma del impuesto al calculo de la transaccion 
+    } 
     return $valor;
 }
