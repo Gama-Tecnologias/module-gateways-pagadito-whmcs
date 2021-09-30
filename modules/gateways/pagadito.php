@@ -33,21 +33,6 @@ function pagadito_config()
 {
     $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
     
-    $opciones_parametros = array(
-                'noenviar' => 'No enviar',
-                'invoiceid' => 'Numero Factura',
-                'description' => 'Descripcion Pago',
-                'amount' => 'Monto total',
-                'fullname' => 'Cliente',
-                'email' => 'Correo Electronico',
-                'address1' => 'Direción 1',
-                'address2' => 'Dirección 2',
-                'city' => 'Ciudad',
-                'state' => 'Estado/Provincia',
-                'postcode' => 'Codigo Postal',
-                'country' => 'Pais',
-            );
-    
     return array(
         'FriendlyName' => array(
             'Type' => 'System',
@@ -105,41 +90,11 @@ function pagadito_config()
             'Default' => '0',
             'Description' => 'Número utilizado para el calculo de impuesto de la comisión de pagadito. Desde 0 hasta 99',
         ),
-        'param1' => array(
-            'FriendlyName' => 'Parametro #1',
-            'Type' => 'dropdown',
-            $opciones_parametros,
-            'Default' => 'noenviar',
-            'Description' => 'Parametro #1 que se va a enviar a Pagadito',
-        ),
-        'param2' => array(
-            'FriendlyName' => 'Parametro #2',
-            'Type' => 'dropdown',
-            'Options' => $opciones_parametros,
-            'Default' => 'noenviar',
-            'Description' => 'Parametro #2 que se va a enviar a Pagadito',
-        ),
-        'param3' => array(
-            'FriendlyName' => 'Parametro #3',
-            'Type' => 'dropdown',
-            'Options' => $opciones_parametros,
-            'Default' => 'noenviar',
-            'Description' => 'Parametro #3 que se va a enviar a Pagadito',
-        ),
-        'param4' => array(
-            'FriendlyName' => 'Parametro #4',
-            'Type' => 'dropdown',
-            'Options' => $opciones_parametros,
-            'Default' => 'noenviar',
-            'Description' => 'Parametro #4 que se va a enviar a Pagadito',
-        ),
-        'param5' => array(
-            'FriendlyName' => 'Parametro #5',
-            'Type' => 'dropdown',
-            'Options' => $opciones_parametros,
-            'Default' => 'noenviar',
-            'Description' => 'Parametro #5 que se va a enviar a Pagadito',
-        ),
+        'param1' => createParam(1),
+        'param2' => createParam(2),
+        'param3' => createParam(3),
+        'param4' => createParam(4),
+        'param5' => createParam(5),
         'urlretorno' => array(
             'FriendlyName'  => 'URL Retorno',
             'Type' => 'label',
@@ -221,4 +176,27 @@ function pagadito_link($params)
     // Se puede asiganar en configuracion una imagen diferente a la Default de Pagadito
     $returnStr .= '<img src="' . (empty($urlImagen) ? '.\modules\gateways\pagadito\pagaditotarjetas-min.png' : $urlImagen) . '" alt="' . $companyName . '"></form>';
     return $returnStr;
+}
+
+function createParam($i){
+   return array(
+        'FriendlyName' => 'Parametro #'.$i,
+        'Type' => 'dropdown',
+        'Options' => array(
+            'noenviar' => 'No enviar',
+            'invoiceid' => 'Numero Factura',
+            'description' => 'Descripcion Pago',
+            'amount' => 'Monto total',
+            'fullname' => 'Cliente',
+            'email' => 'Correo Electronico',
+            'address1' => 'Direción 1',
+            'address2' => 'Dirección 2',
+            'city' => 'Ciudad',
+            'state' => 'Estado/Provincia',
+            'postcode' => 'Codigo Postal',
+            'country' => 'Pais',
+        ),
+        'Default' => 'noenviar',
+        'Description' => 'Parametro #'.$i.' que se va a enviar a Pagadito',
+   );
 }
