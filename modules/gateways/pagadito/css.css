@@ -7,7 +7,7 @@
  *
  * @author      Gamatecnologias.com <soporte@gamatecnologias.com>
  * @copyright   Copyright (c) 2021, gamatecnologias.com
- * @version     PHP 1.0.0
+ * @version     PHP 1.0.1
  * @link        https://www.gamatecnologias.com/
  */
 
@@ -26,7 +26,8 @@
     background-color: #469546;
 }
 
-.form-pagadito img {
+.form-pagadito img {    
+    margin-left: 5px;
     max-height: 30px !important;
     max-width: 200px !important;
 }
