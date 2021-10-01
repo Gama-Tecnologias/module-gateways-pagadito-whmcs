@@ -1,0 +1,8 @@
+Pasos para la instalacion
+1 - Subir el comprimido a la carpeta {WHMCS-ROOT} y descomprimirlo
+2 - Ingresar al sistema WHMCS -> Configuracion -> Ajustes -> Pasarelas de pago -> All Payment Gateways -> Click sobre el boton "Pagadito Gateway Module"
+3 - Crear una cuenta SandBox en Pagadito https://sandbox.pagadito.com/index.php?mod=user&hac=vregfC
+4 - Ingresar al panel Pagadito -> Configuración técnica -> Parámetros de integración y extrar los valores de UID y WSK e ingresarlo en el sistema WHMCS
+5 - Copiar del sistema WHMCS el url de retorno y pegarlo en el panel de Pagadito
+6 - Si quiere configurar parametros para reporteria en Pagadito se deb de configurar en ambos sistemas
+7 - Ingresar en el panel Pagadito -> Configuración técnica -> Webhooks, habilitar y pegar el url que se indica en el panel de WHMCS
