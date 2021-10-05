@@ -41,7 +41,7 @@ $cert_url = $headers['PAGADITO-CERT-URL'];
 $notification_signature = base64_decode($headers['PAGADITO-SIGNATURE']);
 
 //Ips Permitidas por pagadito para aceptar transacciones
-$ipok = array('162.242.202.172');
+$ipok = json_decode( file_get_contents('ips-pagadito.json'));
 
 // obtener data
 $data = file_get_contents('php://input');
