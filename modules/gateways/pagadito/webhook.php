@@ -77,25 +77,27 @@ $statusok = array('REVOKED', 'FAILED', 'CANCELED', 'EXPIRED', 'VERIFYING', 'REGI
 
 // verificacion
 if ($resultado == 1 || in_array($ip, $ipok)) { // verificación de la firma exitosa o bien si el origen es de las ips conocidas
-    
-    // Validamos si el id de factura existe en el sistema, de lo contrario devolvera un die
-    $invoiceId = checkCbInvoiceID( $obj_data->resource->ern, $gatewayModuleName );
-    // Se valida si la transaccion ya fue aplicada en sistema para no duplicar transacciones
-    checkCbTransID( $obj_data->resource->reference );
+    // Validamos que el evento sea de cambio de estado
+    if ($obj_data->event_type == 'TRANSACTION.STATUS.CHANGE' ){     
+        // Validamos si el id de factura existe en el sistema, de lo contrario devolvera un die
+        $invoiceId = checkCbInvoiceID( $obj_data->resource->ern, $gatewayModuleName );
+        // Se valida si la transaccion ya fue aplicada en sistema para no duplicar transacciones
+        checkCbTransID( $obj_data->resource->reference );
 
-    if ($obj_data->resource->status == 'COMPLETED'){
-            // Completar la transaccion
-            addInvoicePayment($invoiceId, $obj_data->resource->reference, $obj_data->resource->amount->total , get_commision($obj_data->resource->amount->total, $porImpuesto), $gatewayModuleName);            
-            logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data->resource->status );
-            http_response_code(200);
-    }else if(in_array($obj_data->resource->status, $statusok)){
-            // Poderecto tomar la transaccion como fallida
-            logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data->resource->status );
-            // REVOKED, FAILED, CANCELED, EXPIRED, VERIFYING, REGISTERED
-            http_response_code(200);
-    }else{
-        logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip ) , "Error" );
-        http_response_code(400);
+        if ($obj_data->resource->status == 'COMPLETED'){
+                // Completar la transaccion
+                addInvoicePayment($invoiceId, $obj_data->resource->reference, $obj_data->resource->amount->total , get_commision($obj_data->resource->amount->total, $porImpuesto), $gatewayModuleName);            
+                logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data->resource->status );
+                http_response_code(200);
+        }else if(in_array($obj_data->resource->status, $statusok)){
+                // Poderecto tomar la transaccion como fallida
+                logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data->resource->status );
+                // REVOKED, FAILED, CANCELED, EXPIRED, VERIFYING, REGISTERED
+                http_response_code(200);
+        }else{
+            logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip ) , "Error" );
+            http_response_code(400);
+        }
     }
 } elseif ($resultado == 0) { // verificación de la firma invalida
     logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip ) , "Error" );
