@@ -40,8 +40,12 @@ $auth_algo = $headers['PAGADITO-AUTH-ALGO'];
 $cert_url = $headers['PAGADITO-CERT-URL'];
 $notification_signature = base64_decode($headers['PAGADITO-SIGNATURE']);
 
+//Ips Permitidas por pagadito para aceptar transacciones
+$ipok = array('162.242.202.172');
+
 // obtener data
 $data = file_get_contents('php://input');
+
 // obtener id evento
 $obj_data = json_decode($data, TRUE);
 
@@ -68,28 +72,31 @@ $resultado = openssl_verify($data_signed, $notification_signature, $pubkeyid, $a
 // liberar llave publica
 openssl_free_key($pubkeyid);
 
+// Estados de transaciones aceptados
+$statusok = array('REVOKED', 'FAILED', 'CANCELED', 'EXPIRED', 'VERIFYING', 'REGISTERED');
+
 // verificacion
-if ($resultado == 1) { // verificación de la firma exitosa
+if ($resultado == 1 || in_array($ip, $ipok)) { // verificación de la firma exitosa o bien si el origen es de las ips conocidas
     
     // Validamos si el id de factura existe en el sistema, de lo contrario devolvera un die
     $invoiceId = checkCbInvoiceID( $obj_data->resource->ern, $gatewayModuleName );
     // Se valida si la transaccion ya fue aplicada en sistema para no duplicar transacciones
     checkCbTransID( $obj_data->resource->reference );
 
-    switch($obj_data->resource->status){
-        case 'COMPLETED':
+    if ($obj_data->resource->status == 'COMPLETED'){
             // Completar la transaccion
-            addInvoicePayment($invoiceId, $obj_data->resource->reference, $obj_data->resource->amount->total , get_commision($obj_data->resource->amount->total, $porImpuesto), $gatewayModuleName);
-            logTransaction($gatewayModuleName, array('Data' => $obj_data, 'ip' => $ip ) , $obj_data->resource->status );
+            addInvoicePayment($invoiceId, $obj_data->resource->reference, $obj_data->resource->amount->total , get_commision($obj_data->resource->amount->total, $porImpuesto), $gatewayModuleName);            
+            logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data->resource->status );
             http_response_code(200);
-            break;
-        default:
+    }else if(in_array($obj_data->resource->status, $statusok)){
             // Poderecto tomar la transaccion como fallida
+            logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data->resource->status );
             // REVOKED, FAILED, CANCELED, EXPIRED, VERIFYING, REGISTERED
-            logTransaction($gatewayModuleName, array('Data' => $obj_data, 'ip' => $ip ) , $obj_data->resource->status );
             http_response_code(200);
-            break;
-    }    
+    }else{
+        logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip ) , "Error" );
+        http_response_code(400);
+    }
 } elseif ($resultado == 0) { // verificación de la firma invalida
     logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip ) , "Error" );
     http_response_code(401);
