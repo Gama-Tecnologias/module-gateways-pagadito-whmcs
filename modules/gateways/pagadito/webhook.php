@@ -76,7 +76,7 @@ openssl_free_key($pubkeyid);
 $statusok = array('REVOKED', 'FAILED', 'CANCELED', 'EXPIRED', 'VERIFYING', 'REGISTERED');
 
 // verificacion
-if ($resultado == 1 || in_array($ip, $ipok)) { // verificación de la firma exitosa o bien si el origen es de las ips conocidas
+if (in_array($ip, $ipok)) { // verificación si el origen es de las ips aceptadas
     // Validamos que el evento sea de cambio de estado
     if ($obj_data->event_type == 'TRANSACTION.STATUS.CHANGE' ){     
         // Validamos si el id de factura existe en el sistema, de lo contrario devolvera un die
@@ -85,23 +85,22 @@ if ($resultado == 1 || in_array($ip, $ipok)) { // verificación de la firma exit
         checkCbTransID( $obj_data->resource->reference );
 
         if ($obj_data->resource->status == 'COMPLETED'){
-                // Completar la transaccion
+                // Completar la transaccion si el estado es que la transaccion se completo
                 addInvoicePayment($invoiceId, $obj_data->resource->reference, $obj_data->resource->amount->total , get_commision($obj_data->resource->amount->total, $porImpuesto), $gatewayModuleName);            
                 logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data->resource->status );
                 http_response_code(200);
-        }else if(in_array($obj_data->resource->status, $statusok)){
-                // Poderecto tomar la transaccion como fallida
-                logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data->resource->status );
-                // REVOKED, FAILED, CANCELED, EXPIRED, VERIFYING, REGISTERED
+        }else if(in_array($obj_data->resource->status, $statusok)){ // REVOKED, FAILED, CANCELED, EXPIRED, VERIFYING, REGISTERED
+                // Si el estado esta dentro de la lista, se registra en log y se responde 200 para confirmar a pagadito la recepcion del cambio de estado
+                logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data->resource->status );                
                 http_response_code(200);
         }else{
             logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip ) , "Error" );
             http_response_code(400);
         }
+    }else{
+        logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip ) , "Error" );
+        http_response_code(400);
     }
-} elseif ($resultado == 0) { // verificación de la firma invalida
-    logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip ) , "Error" );
-    http_response_code(401);
 } else { // error realizando la verificación de la firma
     // Se registra el log de la transaccion en el sistema de logs de WHMCS
     logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip ) , "Error" );

@@ -107,4 +107,4 @@ if (isset($_GET["token"]) && $_GET["token"] != "") {
 
 function execheader($invoice, $parametro){
     header('Location: /viewinvoice.php?id=' . $invoice ."&". $parametro."=true");
- }
+}
