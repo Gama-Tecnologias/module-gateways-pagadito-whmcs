@@ -50,7 +50,7 @@ $data = file_get_contents('php://input');
 $obj_data = json_decode($data, TRUE);
 
 // generar cadena para confirmar firma
-$data_signed = $notification_id . '|' . $notification_timestamp . '|' . $obj_data->id . '|' . crc32($data) . '|' . $pagaditoWSK;
+$data_signed = $notification_id . '|' . $notification_timestamp . '|' . $obj_data['id'] . '|' . crc32($data) . '|' . $pagaditoWSK;
 
 // obtener contenido del certificado
 // opciones de peticiones http para generar el stream context para obtener el certificado
@@ -76,35 +76,35 @@ openssl_free_key($pubkeyid);
 $statusok = array('REVOKED', 'FAILED', 'CANCELED', 'EXPIRED', 'VERIFYING', 'REGISTERED');
 
 // verificacion
-if (in_array($ip, $ipok)) { // verificación si el origen es de las ips aceptadas
+if (in_array($ip, $ipok) and $resultado == 1) { // verificación si el origen es de las ips aceptadas y la firma de Pagadito
     // Validamos que el evento sea de cambio de estado
-    if ($obj_data["event_type"] == 'TRANSACTION.STATUS.CHANGE' ){     
+    if ($obj_data['event_type'] == 'TRANSACTION.STATUS.CHANGE' ){     
         // Validamos si el id de factura existe en el sistema, de lo contrario devolvera un die
-        $invoiceId = checkCbInvoiceID( $obj_data->resource->ern, $gatewayModuleName );
+        $invoiceId = checkCbInvoiceID( $obj_data['resource']['ern'] , $gatewayModuleName );
         // Se valida si la transaccion ya
          fue aplicada en sistema para no duplicar transacciones
-        checkCbTransID( $obj_data->resource->reference );
+        checkCbTransID( $obj_data['resource']['reference'] );
 
-        if ($obj_data->resource->status == 'COMPLETED'){
+        if ($obj_data['resource']['status'] == 'COMPLETED'){
                 // Completar la transaccion si el estado es que la transaccion se completo
-                addInvoicePayment($invoiceId, $obj_data->resource->reference, $obj_data->resource->amount->total , get_commision($obj_data->resource->amount->total, $porImpuesto), $gatewayModuleName);            
-                logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data->resource->status );
+                addInvoicePayment($invoiceId, $obj_data['resource']['reference'] , $obj_data['resource']['amount']['total'] , get_commision( $obj_data['resource']['amount']['total'] , $porImpuesto), $gatewayModuleName);            
+                logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data['resource']['status'] );
                 http_response_code(200);
-        }else if(in_array($obj_data->resource->status, $statusok)){ // REVOKED, FAILED, CANCELED, EXPIRED, VERIFYING, REGISTERED
+        }else if(in_array( $obj_data['resource']['status'] , $statusok)){ // REVOKED, FAILED, CANCELED, EXPIRED, VERIFYING, REGISTERED
                 // Si el estado esta dentro de la lista, se registra en log y se responde 200 para confirmar a pagadito la recepcion del cambio de estado
-                logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data->resource->status );                
+                logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data['resource']['status'] );                
                 http_response_code(200);
         }else{
-            logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip, 'status' => $obj_data->resource->status ) , "Error" );
+            logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip, 'status' => $obj_data['resource']['status'] ) , "Error" );
             http_response_code(400);
         }
     }else{
-        logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip , 'event_type' => $obj_data["event_type"] ) , "Error" );
+        logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip , 'event_type' => $obj_data['event_type'] ) , "Error" );
         http_response_code(400);
     }
 } else { // error realizando la verificación de la firma
     // Se registra el log de la transaccion en el sistema de logs de WHMCS
-    logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip, 'ipok' => $ipok ) , "Error" );
+    logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers ,'Firma' => $resultado, 'ip' => $ip, 'ipok' => $ipok ) , "Error" );
     http_response_code(400);
 }
 
