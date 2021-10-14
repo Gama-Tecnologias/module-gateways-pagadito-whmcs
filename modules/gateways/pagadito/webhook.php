@@ -78,10 +78,11 @@ $statusok = array('REVOKED', 'FAILED', 'CANCELED', 'EXPIRED', 'VERIFYING', 'REGI
 // verificacion
 if (in_array($ip, $ipok)) { // verificación si el origen es de las ips aceptadas
     // Validamos que el evento sea de cambio de estado
-    if ($obj_data->event_type == 'TRANSACTION.STATUS.CHANGE' ){     
+    if ($obj_data["event_type"] == 'TRANSACTION.STATUS.CHANGE' ){     
         // Validamos si el id de factura existe en el sistema, de lo contrario devolvera un die
         $invoiceId = checkCbInvoiceID( $obj_data->resource->ern, $gatewayModuleName );
-        // Se valida si la transaccion ya fue aplicada en sistema para no duplicar transacciones
+        // Se valida si la transaccion ya
+         fue aplicada en sistema para no duplicar transacciones
         checkCbTransID( $obj_data->resource->reference );
 
         if ($obj_data->resource->status == 'COMPLETED'){
@@ -98,7 +99,7 @@ if (in_array($ip, $ipok)) { // verificación si el origen es de las ips aceptada
             http_response_code(400);
         }
     }else{
-        logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip , 'event_type' => $obj_data->event_type ) , "Error" );
+        logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip , 'event_type' => $obj_data["event_type"] ) , "Error" );
         http_response_code(400);
     }
 } else { // error realizando la verificación de la firma
