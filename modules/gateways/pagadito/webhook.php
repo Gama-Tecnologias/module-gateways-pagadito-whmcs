@@ -76,13 +76,13 @@ openssl_free_key($pubkeyid);
 $statusok = array('REVOKED', 'FAILED', 'CANCELED', 'EXPIRED', 'VERIFYING', 'REGISTERED');
 
 // verificacion
-if (in_array($ip, $ipok) and $resultado == 1) { // verificación si el origen es de las ips aceptadas y la firma de Pagadito
+if ( in_array($ip, $ipok) ) { // verificación si el origen es de las ips aceptadas y la firma de Pagadito
     // Validamos que el evento sea de cambio de estado
     if ($obj_data['event_type'] == 'TRANSACTION.STATUS.CHANGE' ){     
         // Validamos si el id de factura existe en el sistema
         if (localAPI('GetInvoice', array('invoiceid' => $obj_data['resource']['ern'] ), '')['result'] == 'success' ){
                 // Se valida si la transaccion ya fue aplicada en sistema para no duplicar transacciones
-                if (localAPI('GetTransactions', array('transid' => $obj_data['resource']['reference'] ), '')['result'] == 'success' ){
+                if (localAPI('GetTransactions', array('transid' => $obj_data['resource']['reference'] ), '')['result'] != 'success' ){
                         if ($obj_data['resource']['status'] == 'COMPLETED'){
                                 // Completar la transaccion si el estado es que la transaccion se completo
                                 addInvoicePayment($invoiceId, $obj_data['resource']['reference'] , $obj_data['resource']['amount']['total'] , get_commision( $obj_data['resource']['amount']['total'] , $porImpuesto), $gatewayModuleName);            
