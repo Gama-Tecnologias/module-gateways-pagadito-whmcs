@@ -76,7 +76,7 @@ openssl_free_key($pubkeyid);
 $statusok = array('REVOKED', 'FAILED', 'CANCELED', 'EXPIRED', 'VERIFYING', 'REGISTERED');
 
 // verificacion
-if ( in_array($ip, $ipok) ) { // verificación si el origen es de las ips aceptadas y la firma de Pagadito
+if ( in_array($ip, $ipok) ) { // verificación si el origen es de las ips aceptadas
     // Validamos que el evento sea de cambio de estado
     if ($obj_data['event_type'] == 'TRANSACTION.STATUS.CHANGE' ){     
         // Validamos si el id de factura existe en el sistema
@@ -92,25 +92,25 @@ if ( in_array($ip, $ipok) ) { // verificación si el origen es de las ips acepta
                                 // Si el estado esta dentro de la lista, se registra en log y se responde 200 para confirmar a pagadito la recepcion del cambio de estado
                                 logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data['resource']['status'] );                
                                 http_response_code(200);
-                        }else{
-                            logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip, 'status' => $obj_data['resource']['status'] ) , "Error" );
+                        }else{// Estatus de trnsaccion no esta registrado como permitido
+                            logTransaction($gatewayModuleName, array('ERROR' => 'Estatus de transaccion no reconocido' ,'Data' => $obj_data, 'headers' => $headers , 'ip' => $ip, 'status' => $obj_data['resource']['status'] ) , "ERROR" );
                             http_response_code(400);
                         }
                  }else{ // Si la transaccion no existe registra el error y devuelve un 200 para que pagadito no siga enviando consultas
-                        logTransaction($gatewayModuleName, array('Data' => $obj_data, 'error' => 'Transaccion ya esta registrada' ) , "Error" );
+                        logTransaction($gatewayModuleName, array( 'ERROR' => 'Transaccion ya esta registrada', 'Data' => $obj_data ) , "ERROR" );
                         http_response_code(200);
                 }
          }else{ // Si la factura no existe registra el error y devuelve un 200 para que pagadito no siga enviando consultas
-                logTransaction($gatewayModuleName, array('Data' => $obj_data, 'error' => 'Factura no existe en sistema' ) , "Error" );
+                logTransaction($gatewayModuleName, array( 'ERROR' => 'Factura no existe en sistema' , 'Data' => $obj_data ) , "ERROR" );
                 http_response_code(200);
          }
-    }else{
-        logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip , 'event_type' => $obj_data['event_type'] ) , "Error" );
+    }else{// Tipo de evento incorrecto
+        logTransaction($gatewayModuleName, array('ERROR' => 'Tipo de evento incorrecto' ,'Data' => $obj_data, 'headers' => $headers , 'ip' => $ip , 'event_type' => $obj_data['event_type'] ) , "ERROR" );
         http_response_code(400);
     }
 } else { // error realizando la verificación de la firma
     // Se registra el log de la transaccion en el sistema de logs de WHMCS
-    logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers ,'Firma' => $resultado, 'ip' => $ip, 'ipok' => $ipok ) , "Error" );
+    logTransaction($gatewayModuleName, array('ERROR' => 'Ip no esta registrada' , 'Data' => $obj_data, 'headers' => $headers ,'Firma' => $resultado, 'ip' => $ip, 'ipok' => $ipok ) , "ERROR" );
     http_response_code(400);
 }
 
