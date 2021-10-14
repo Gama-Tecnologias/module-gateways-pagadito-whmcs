@@ -79,25 +79,31 @@ $statusok = array('REVOKED', 'FAILED', 'CANCELED', 'EXPIRED', 'VERIFYING', 'REGI
 if (in_array($ip, $ipok) and $resultado == 1) { // verificación si el origen es de las ips aceptadas y la firma de Pagadito
     // Validamos que el evento sea de cambio de estado
     if ($obj_data['event_type'] == 'TRANSACTION.STATUS.CHANGE' ){     
-        // Validamos si el id de factura existe en el sistema, de lo contrario devolvera un die
-        $invoiceId = checkCbInvoiceID( $obj_data['resource']['ern'] , $gatewayModuleName );
-        // Se valida si la transaccion ya
-         fue aplicada en sistema para no duplicar transacciones
-        checkCbTransID( $obj_data['resource']['reference'] );
-
-        if ($obj_data['resource']['status'] == 'COMPLETED'){
-                // Completar la transaccion si el estado es que la transaccion se completo
-                addInvoicePayment($invoiceId, $obj_data['resource']['reference'] , $obj_data['resource']['amount']['total'] , get_commision( $obj_data['resource']['amount']['total'] , $porImpuesto), $gatewayModuleName);            
-                logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data['resource']['status'] );
+        // Validamos si el id de factura existe en el sistema
+        if (localAPI('GetInvoice', array('invoiceid' => $obj_data['resource']['ern'] ), '')['result'] == 'success' ){
+                // Se valida si la transaccion ya fue aplicada en sistema para no duplicar transacciones
+                if (localAPI('GetTransactions', array('transid' => $obj_data['resource']['reference'] ), '')['result'] == 'success' ){
+                        if ($obj_data['resource']['status'] == 'COMPLETED'){
+                                // Completar la transaccion si el estado es que la transaccion se completo
+                                addInvoicePayment($invoiceId, $obj_data['resource']['reference'] , $obj_data['resource']['amount']['total'] , get_commision( $obj_data['resource']['amount']['total'] , $porImpuesto), $gatewayModuleName);            
+                                logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data['resource']['status'] );
+                                http_response_code(200);
+                        }else if(in_array( $obj_data['resource']['status'] , $statusok)){ // REVOKED, FAILED, CANCELED, EXPIRED, VERIFYING, REGISTERED
+                                // Si el estado esta dentro de la lista, se registra en log y se responde 200 para confirmar a pagadito la recepcion del cambio de estado
+                                logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data['resource']['status'] );                
+                                http_response_code(200);
+                        }else{
+                            logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip, 'status' => $obj_data['resource']['status'] ) , "Error" );
+                            http_response_code(400);
+                        }
+                 }else{ // Si la transaccion no existe registra el error y devuelve un 200 para que pagadito no siga enviando consultas
+                        logTransaction($gatewayModuleName, array('Data' => $obj_data, 'error' => 'Transaccion ya esta registrada' ) , "Error" );
+                        http_response_code(200);
+                }
+         }else{ // Si la factura no existe registra el error y devuelve un 200 para que pagadito no siga enviando consultas
+                logTransaction($gatewayModuleName, array('Data' => $obj_data, 'error' => 'Factura no existe en sistema' ) , "Error" );
                 http_response_code(200);
-        }else if(in_array( $obj_data['resource']['status'] , $statusok)){ // REVOKED, FAILED, CANCELED, EXPIRED, VERIFYING, REGISTERED
-                // Si el estado esta dentro de la lista, se registra en log y se responde 200 para confirmar a pagadito la recepcion del cambio de estado
-                logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data['resource']['status'] );                
-                http_response_code(200);
-        }else{
-            logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip, 'status' => $obj_data['resource']['status'] ) , "Error" );
-            http_response_code(400);
-        }
+         }
     }else{
         logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip , 'event_type' => $obj_data['event_type'] ) , "Error" );
         http_response_code(400);
