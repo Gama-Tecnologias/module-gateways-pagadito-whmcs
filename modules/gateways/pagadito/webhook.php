@@ -94,16 +94,16 @@ if (in_array($ip, $ipok)) { // verificación si el origen es de las ips aceptada
                 logTransaction($gatewayModuleName, array('Firma' => $resultado, 'Data' => $obj_data, 'ip' => $ip ) , $obj_data->resource->status );                
                 http_response_code(200);
         }else{
-            logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip ) , "Error" );
+            logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip, 'status' => $obj_data->resource->status ) , "Error" );
             http_response_code(400);
         }
     }else{
-        logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip ) , "Error" );
+        logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip , 'event_type' => $obj_data->event_type ) , "Error" );
         http_response_code(400);
     }
 } else { // error realizando la verificación de la firma
     // Se registra el log de la transaccion en el sistema de logs de WHMCS
-    logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip ) , "Error" );
+    logTransaction($gatewayModuleName, array('Data' => $obj_data, 'headers' => $headers , 'ip' => $ip, 'ipok' => $ipok ) , "Error" );
     http_response_code(400);
 }
 
@@ -113,10 +113,11 @@ if (in_array($ip, $ipok)) { // verificación si el origen es de las ips aceptada
  */
 function get_commision($amount, $porImpuesto)
 { // Forumula 5% + $0.25 + Impuesto Local
+    $prec = 2; // Cantidad de decimales permitidos
     $valor = $amount * 0.05;
     $valor += 0.25;
     if ($porImpuesto > 0 ){
        $valor += $valor * ($porImpuesto / 100); // Suma del impuesto al calculo de la transaccion 
     } 
-    return $valor;
+    return sprintf( "%.".$prec."f", floor( $valor*pow( 10, $prec ) )/pow( 10, $prec ) );//Se truncan los decimales para el calculo
 }

@@ -287,12 +287,13 @@ class Pagadito
      */
     public function get_commision($porImpuesto)
     { // Forumula 5% + $0.25 + Impuesto Local
+        $prec = 2; // Cantidad de decimales permitidos
         $valor = $this->return_attr_value("amount") * 0.05;
         $valor += 0.25;
         if ($porImpuesto > 0 ){
-            $valor += $valor * ($porImpuesto / 100); // Suma del impuesto al calculo de la transaccion 
+        $valor += $valor * ($porImpuesto / 100); // Suma del impuesto al calculo de la transaccion 
         } 
-        return $valor;
+        return sprintf( "%.".$prec."f", floor( $valor*pow( 10, $prec ) )/pow( 10, $prec ) );//Se truncan los decimales para el calculo
     }
 
     //*********************************** Funciones Públicas auxiliares
