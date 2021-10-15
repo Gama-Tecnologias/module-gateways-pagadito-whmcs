@@ -36,7 +36,7 @@ function pagadito_config()
     return array(
         'FriendlyName' => array(
             'Type' => 'System',
-            'Value' => 'Pagadito Gateway Module',
+            'Value' => 'Pagadito',
         ),
         'pagadito_UID' => array(
             'FriendlyName' => 'Pagadito UID',
